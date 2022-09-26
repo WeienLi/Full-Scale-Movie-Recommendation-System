@@ -1,4 +1,6 @@
 from pykafka import KafkaClient
+from utils.constants import MessageType
+from utils.message_parser import parse_message
 
 HOST = 'fall2022-comp585.cs.mcgill.ca:9092' # HOST to connect to
 TOPIC = 'movielog3'                         # Topic to read from
@@ -15,7 +17,11 @@ count = 0
 for message in consumer:
     if message is not None:
         text = message.value.decode('utf-8')
-        print(text)
+        parsed_message = parse_message(text)
+        message_type = parsed_message[2]
+        if message_type != MessageType.RATING:
+            continue
+        print(parse_message(text))
         count += 1
         if count >= LIMIT:
             break
