@@ -5,8 +5,15 @@ Code for our project. Please try to update this document as we add more features
 ## Installation
 
 ```
-pip install requirements.txt
+pip install -r requirements.txt
 ```
+
+Keep requirements.txt up to date if you install some new packages:
+
+```
+pip freeze > requirements.txt
+```
+
 
 ## Running kafka-consumer
 

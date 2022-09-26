@@ -7,7 +7,7 @@ def parse_message(message):
         ## GET messages
         time = message[0]
         user = message[1]
-        if '/rate' in message[2]:
+        if 'GET /rate/' in message[2]:    
             type = MessageType.RATING
             movieId = message[2].split('=')[0].split('/')[-1]
             rating = int(message[2].split('=')[1])
