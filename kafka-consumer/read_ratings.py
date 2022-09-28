@@ -7,7 +7,7 @@ import pandas as pd
 
 HOST = 'fall2022-comp585.cs.mcgill.ca:9092' # HOST to connect to
 TOPIC = 'movielog3'                         # Topic to read from
-LIMIT = 10000                                  # Number of messages to read
+LIMIT = 200000                                  # Number of messages to read
 
 
 client = KafkaClient(hosts=HOST)
