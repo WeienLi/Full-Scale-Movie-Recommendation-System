@@ -60,3 +60,20 @@ Stops all running Docker instances of the Flask API server.
 ```
 ./stop.sh
 ```
+
+#### Loading the ALS model
+
+To the load the ALS model make sure the folder is approriatedly downloaded and DO NOT ZIP, zip will loses metadata of the model. 
+
+Import neccessary dependency to load the model
+
+```
+from pyspark.ml.recommendation import ALSModel
+```
+
+Loading
+
+```
+[varname] = ALSModel.load("[path]/ALS")
+```
+
