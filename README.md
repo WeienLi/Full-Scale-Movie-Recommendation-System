@@ -14,7 +14,6 @@ Keep requirements.txt up to date if you install some new packages:
 pip freeze > requirements.txt
 ```
 
-
 ## Running kafka-consumer
 
 🟥 IMPORTANT: You'll need to be on the McGill network (Wifi or VPN) to access the Kafka streams.
@@ -23,4 +22,41 @@ pip freeze > requirements.txt
 
 ```
 python kafka-consumer/read_ratings.py
+```
+
+## Running flask_API
+
+The recommender API can be run inside a Docker container. Utility scripts (`start.sh`, `stop.sh`) can help you easily manage the server.
+
+#### Prerequisites
+
+Docker must be installed on the machine ([Download Docker](https://docs.docker.com/get-docker/)).
+(Linux/MacOS) Make the utility scripts executable:
+
+```
+chmod +x start.sh
+chmod +x stop.sh
+```
+
+#### Starting the server
+
+Starts the Flask API server in the background inside a Docker container.
+
+```
+./start.sh
+```
+
+#### Accessing the API
+
+See the API in action by going to `http://<ip-of-the-virtual-machine>:8082`:
+
+- **http://127.0.0.1:8082/** - If you're running this locally. Otherwise, you may need to port forward if you're running the API on a remote machine.
+- **http://fall2022-comp585-3.cs.mcgill.ca:8082/** - If you're running the API on our team's remote server. NOTE: You'll need to be on McGill VPN to access this.
+
+#### Stopping the server
+
+Stops all running Docker instances of the Flask API server.
+
+```
+./stop.sh
 ```
