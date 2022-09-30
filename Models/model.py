@@ -5,7 +5,7 @@ def recommendMovies(userID):
     ''' This function takes in a user ID and returns a list of 20 recommended movies for that user.'''
     
     # Load the model
-    model = ALSModel.load("/ALS/metadata/_SUCCESS")
+    model = ALSModel.load("ALS")
     # Get the recommendations
     recommendations = model.recommendForAllUsers(10)
     # Get the recommendations for the user

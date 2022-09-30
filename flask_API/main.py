@@ -2,7 +2,7 @@ from flask import Flask
 app = Flask(__name__)
 
 import json
-from ..Models.ALS.model import recommendMovies
+from ..Models.model import recommendMovies
 
 @app.route('/')
 def hello_world():
