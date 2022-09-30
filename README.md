@@ -26,16 +26,15 @@ python kafka-consumer/read_ratings.py
 
 ## Running flask_API
 
-The recommender API can be run inside a Docker container. Utility scripts (`start.sh`, `stop.sh`) can help you easily manage the server.
+The recommender API can be run inside a Docker container. A utility script (`docker.sh`) can help you easily manage the server.
 
 #### Prerequisites
 
 Docker must be installed on the machine ([Download Docker](https://docs.docker.com/get-docker/)).
-(Linux/MacOS) Make the utility scripts executable:
+(Linux/MacOS) Make the utility script executable:
 
 ```
-chmod +x start.sh
-chmod +x stop.sh
+chmod +x docker.sh
 ```
 
 #### Starting the server
@@ -43,7 +42,7 @@ chmod +x stop.sh
 Starts the Flask API server in the background inside a Docker container.
 
 ```
-./start.sh
+./docker.sh start
 ```
 
 #### Accessing the API
@@ -58,12 +57,12 @@ See the API in action by going to `http://<ip-of-the-virtual-machine>:8082`:
 Stops all running Docker instances of the Flask API server.
 
 ```
-./stop.sh
+./docker.sh stop
 ```
 
 #### Loading the ALS model
 
-To the load the ALS model make sure the folder is approriatedly downloaded and DO NOT ZIP, zip will loses metadata of the model. 
+To the load the ALS model make sure the folder is approriatedly downloaded and DO NOT ZIP, zip will loses metadata of the model.
 
 Import neccessary dependency to load the model
 
@@ -76,4 +75,3 @@ Loading
 ```
 [varname] = ALSModel.load("[path]/ALS")
 ```
-
