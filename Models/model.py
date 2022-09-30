@@ -1,6 +1,7 @@
 # Import the model here
 import numpy as np 
 import pandas as pd
+import os
 from pyspark.ml.recommendation import ALS, ALSModel
 from pyspark.ml.evaluation import RegressionEvaluator
 from pyspark.ml.tuning import ParamGridBuilder, CrossValidator
@@ -15,9 +16,10 @@ spark = SparkSession.builder.appName('Recommendations').getOrCreate()
 
 def recommendMovies(userID):
     #load model
-    model = ALSModel.load("ALS")
+    root = os.path.join(os.path.dirname(__file__))
+    model = ALSModel.load(os.path.join(root, 'ALS'))
     # load lookup table csv
-    lookup = spark.read.csv("lookuptable",sep = ',', header = True)
+    lookup = spark.read.csv(os.path.join(root, 'lookuptable'),sep = ',', header = True)
     userid_int = int(userID)
     user_subset = spark.createDataFrame([userid_int], IntegerType())
     user_subset = user_subset. \
