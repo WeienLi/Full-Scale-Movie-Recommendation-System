@@ -1,6 +1,3 @@
-# Import the model here
-import numpy as np 
-import pandas as pd
 import os
 from pyspark.ml.recommendation import ALSModel
 from pyspark import SparkContext
