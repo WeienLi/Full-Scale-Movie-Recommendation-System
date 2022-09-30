@@ -2,14 +2,11 @@
 import numpy as np 
 import pandas as pd
 import os
-from pyspark.ml.recommendation import ALS, ALSModel
-from pyspark.ml.evaluation import RegressionEvaluator
-from pyspark.ml.tuning import ParamGridBuilder, CrossValidator
+from pyspark.ml.recommendation import ALSModel
 from pyspark import SparkContext
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
-from pyspark.ml.feature import StringIndexer
-from pyspark.sql.types import StructType,StructField, StringType, IntegerType
+from pyspark.sql.types import IntegerType
 
 sc = SparkContext()
 spark = SparkSession.builder.appName('Recommendations').getOrCreate()
