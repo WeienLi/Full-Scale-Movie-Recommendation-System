@@ -2,6 +2,7 @@ from flask import Flask
 app = Flask(__name__)
 
 import json
+from ..Models.model import recommendMovies
 
 @app.route('/')
 def hello_world():
@@ -10,8 +11,5 @@ def hello_world():
 
 @app.route('/recommend/<userID>', methods = ['GET'])
 def getRecommendations(userID):
-    move_list = []
-    for i in range(10):
-        movieNmae = "movie " + str(i)
-        move_list.append(movieNmae)
+    move_list = recommendMovies(userID)
     return json.dumps(move_list)
