@@ -1,3 +1,4 @@
+import json
 import os
 from pyspark.ml.recommendation import ALSModel
 from pyspark import SparkContext
@@ -13,8 +14,9 @@ def recommendMovies(userID):
     #load model
     root = os.path.join(os.path.dirname(__file__))
     model = ALSModel.load(os.path.join(root, 'ALS'))
-    # load lookup table csv
-    lookup = spark.read.csv(os.path.join(root, 'lookuptable'),sep = ',', header = True)
+    # read the lookup table JSON
+    with open(os.path.join(root, 'lookuptable', 'lookuptable.json'), 'r') as f:
+        lookup = json.load(f)
     userid_int = int(userID)
     user_subset = spark.createDataFrame([userid_int], IntegerType())
     user_subset = user_subset. \
@@ -28,7 +30,6 @@ def recommendMovies(userID):
         rec_list = random.sample(range(1, 25533), 20)
     toreturn = []
     for movie1_id in rec_list:
-        final = lookup.filter(lookup.movieIndex == movie1_id)
-        Done = final.select("movieID")
-        toreturn.append(Done.collect()[0][0])
+        movie1_title = lookup[str(movie1_id)]
+        toreturn.append(movie1_title)
     return toreturn
