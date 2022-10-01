@@ -1,4 +1,4 @@
-FROM python:latest
+FROM jupyter/pyspark-notebook:latest
 
 COPY . .
 RUN pip3 install -r requirements.txt
