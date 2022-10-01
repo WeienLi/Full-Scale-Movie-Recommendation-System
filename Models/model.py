@@ -4,6 +4,7 @@ from pyspark import SparkContext
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col
 from pyspark.sql.types import IntegerType
+import random
 
 sc = SparkContext()
 spark = SparkSession.builder.appName('Recommendations').getOrCreate()
@@ -19,9 +20,12 @@ def recommendMovies(userID):
     user_subset = user_subset. \
         withColumn('userId', col('value').cast('integer')).\
         drop('value')
-    rec = model.recommendForUserSubset(user_subset, 20) #model not loaded
-    movie_id_rec = rec.select("recommendations.movieIndex")
-    rec_list = movie_id_rec.collect()[0][0]
+    try:
+        rec = model.recommendForUserSubset(user_subset, 20) #model not loaded
+        movie_id_rec = rec.select("recommendations.movieIndex")
+        rec_list = movie_id_rec.collect()[0][0]
+    except:
+        rec_list = random.sample(range(1, 25533), 20)
     toreturn = []
     for movie1_id in rec_list:
         final = lookup.filter(lookup.movieIndex == movie1_id)
