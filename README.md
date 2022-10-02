@@ -2,7 +2,7 @@
 
 Code for our project. Please try to update this document as we add more features/changes.
 
-## Installation
+## Installation (Skip this part if running with docker)
 
 ```
 pip install -r requirements.txt
