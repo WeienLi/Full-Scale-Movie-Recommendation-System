@@ -1,34 +1,31 @@
+import json
 import os
-from pyspark.ml.recommendation import ALSModel
-from pyspark import SparkContext
-from pyspark.sql import SparkSession
-from pyspark.sql.functions import col
-from pyspark.sql.types import IntegerType
-import random
-
-sc = SparkContext()
-spark = SparkSession.builder.appName('Recommendations').getOrCreate()
 
 def recommendMovies(userID):
-    #load model
+    '''Get a list of recommended movies for a given user ID '''
+    # Return a pre-defined (random) result if the user ID is not in the recommendations
+    if userID not in recommendations:
+        userID = 0
+    
+    rec_list = recommendations[str(userID)]
+    # return the movie titles
+    return [lookup[str(movieID)] for movieID in rec_list]
+
+def init():
+    '''Initialize the model'''
+    global lookup
+    global recommendations
+    # load the cached recommendations JSON
     root = os.path.join(os.path.dirname(__file__))
-    model = ALSModel.load(os.path.join(root, 'ALS'))
-    # load lookup table csv
-    lookup = spark.read.csv(os.path.join(root, 'lookuptable'),sep = ',', header = True)
-    userid_int = int(userID)
-    user_subset = spark.createDataFrame([userid_int], IntegerType())
-    user_subset = user_subset. \
-        withColumn('userId', col('value').cast('integer')).\
-        drop('value')
-    try:
-        rec = model.recommendForUserSubset(user_subset, 20) #model not loaded
-        movie_id_rec = rec.select("recommendations.movieIndex")
-        rec_list = movie_id_rec.collect()[0][0]
-    except:
-        rec_list = random.sample(range(1, 25533), 20)
-    toreturn = []
-    for movie1_id in rec_list:
-        final = lookup.filter(lookup.movieIndex == movie1_id)
-        Done = final.select("movieID")
-        toreturn.append(Done.collect()[0][0])
-    return toreturn
+    with open(os.path.join(root, 'cache', 'recommendations.json'), 'r') as f:
+        recommendations = json.load(f)
+
+    with open(os.path.join(root, 'cache', 'lookuptable.json'), 'r') as f:
+        lookup = json.load(f)
+
+    if recommendations is None or lookup is None:
+        print("Error loading model")
+    else:
+        print("Recommender model loaded")
+
+init()
