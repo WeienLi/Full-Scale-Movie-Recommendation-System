@@ -4,7 +4,7 @@ import os
 def recommendMovies(userID):
     # load the cached recommendations JSON
     root = os.path.join(os.path.dirname(__file__))
-    with open(os.path.join(root, 'cache', 'Recommendations.json'), 'r') as f:
+    with open(os.path.join(root, 'cache', 'recommendations.json'), 'r') as f:
         recommendations = json.load(f)
     
     # Return a pre-defined (random) result if the user ID is not in the recommendations
