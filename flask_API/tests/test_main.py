@@ -1,3 +1,4 @@
+import pytest
 from flask_API.tests import client
 
 # home should return Hello World
@@ -26,9 +27,10 @@ def test_getRecommendations_20(client):
     assert response.status_code == 200
     assert len(response.data.split(b',')) == 20
 
-# TODO: THIS TEST IS FAILING
+# TODO: fix this test
 # getRecommendations should fail for an unknown user
-# def test_getRecommendations_unknown_user(client):
-#     user_id = "999999"
-#     response = client.get("/recommend/" + user_id)
-#     assert response.status_code == 404
+@pytest.mark.skip(reason="This test is failing")
+def test_getRecommendations_unknown_user(client):
+    user_id = "999999"
+    response = client.get("/recommend/" + user_id)
+    assert response.status_code == 404
