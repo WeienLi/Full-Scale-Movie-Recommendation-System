@@ -59,3 +59,19 @@ Stops all running Docker instances of the Flask API server.
 ```
 ./docker.sh stop
 ```
+
+## Testing
+
+### Unit test
+
+#### Run tests:
+
+```
+python -m pytest
+```
+
+#### Run tests with code coverage:
+
+```
+python -m pytest --cov=.
+```
