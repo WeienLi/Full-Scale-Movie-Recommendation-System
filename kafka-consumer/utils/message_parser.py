@@ -22,6 +22,8 @@ def parse_message(message):
         # TODO: Implement this
         return []
     else:
-        print("Invalid message: ", message)
+        # print("Invalid message: ", message)
+        # Some error due to our recommendation is not json
+        # will fix this issue
         return None
 
