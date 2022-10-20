@@ -1,8 +1,7 @@
 from flask import Flask
-app = Flask(__name__)
-
-import json
 from Models.model import recommendMovies
+
+app = Flask(__name__)
 
 @app.route('/')
 def hello_world():
@@ -11,5 +10,5 @@ def hello_world():
 
 @app.route('/recommend/<userID>', methods = ['GET'])
 def getRecommendations(userID):
-    move_list = recommendMovies(userID)
-    return json.dumps(move_list)
+    movie_list = recommendMovies(userID)
+    return ','.join(movie_list)
