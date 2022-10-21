@@ -1,0 +1,36 @@
+name: Deploy
+
+on:
+  push:
+    branches: ["main"]
+
+env:
+  FOLDER_NAME: Team-3
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2.3.4
+
+      - name: Copy files to McGill server
+        uses: appleboy/scp-action@master
+        env:
+          KEY: ${{ secrets.SERVER_SSH_KEY }}
+          HOST: ${{ secrets.SERVER_HOST }}
+          USERNAME: ${{ secrets.SERVER_USERNAME }}
+        with:
+          source: "*"
+          target: ${{ env.FOLDER_NAME }}
+
+      - name: Start Docker
+        uses: appleboy/ssh-action@master
+        env:
+          KEY: ${{ secrets.SERVER_SSH_KEY }}
+          HOST: ${{ secrets.SERVER_HOST }}
+          USERNAME: ${{ secrets.SERVER_USERNAME }}
+        with:
+          script: |
+            cd ${{ env.FOLDER_NAME }}
+            ./docker.sh start
