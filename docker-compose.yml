@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  flask_api:
+    build: .
+    container_name: flask_api
+    ports:
+      - "8082:8082"
+    networks:
+      team3-network:
+        ipv4_address: 172.16.238.10
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus-db
+    ports:
+      - 9090:9090
+    volumes:
+      - ./Monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+    networks:
+      team3-network:
+        ipv4_address: 172.16.238.11
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    depends_on:
+      - prometheus
+    ports:
+      - 3000:3000
+    volumes:
+      - ./Monitoring/datasource.yml:/etc/grafana/provisioning/datasources/default.yml
+      - ./Monitoring/dashboard.yml:/etc/grafana/provisioning/dashboards/default.yml
+      - ./Monitoring/dashboards:/var/lib/grafana/dashboards
+    env_file:
+      - ./Monitoring/grafana.config
+    networks:
+      team3-network:
+        ipv4_address: 172.16.238.12
+
+networks:
+  team3-network:
+    name: team3-network
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.16.238.0/24
