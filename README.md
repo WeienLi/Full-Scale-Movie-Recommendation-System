@@ -60,6 +60,33 @@ Stops all running Docker instances of the Flask API server.
 ./docker.sh stop
 ```
 
+#### Resetting Docker
+
+Removes all Docker data associated with the project from the host.
+
+```
+./docker.sh reset
+```
+
+## Monitoring
+
+Prometheus+Grafana is configured to run by default alongside the API. Prometheus collects and stores various metrics from the API, and Grafana visualizes these metrics in dashboards for monitoring.
+
+NOTE: Prometheus+Grafana is only available when the project is running inside Docker.
+
+### Grafana
+
+See the Grafana dashboards at `http://<ip-of-the-virtual-machine>:3000/dashboards`
+
+- **http://127.0.0.1:3000/dashboards** - If you're running this locally.
+- **http://fall2022-comp585-3.cs.mcgill.ca:3000/dashboards** - If you're running the project on our team's remote server.
+
+Usename: **admin** Password: **pass@123**
+
+### Prometheus
+
+Access Prometheus at `http://<ip-of-the-virtual-machine>:9090`.
+
 ## Testing
 
 ### Unit test
