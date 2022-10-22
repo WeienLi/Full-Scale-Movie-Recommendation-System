@@ -70,9 +70,9 @@ Removes all Docker data associated with the project from the host.
 
 ## Monitoring
 
-Prometheus+Grafana is configured to run by default alongside the API. Prometheus collects and stores various metrics from the API, and Grafana visualizes these metrics in dashboards for monitoring.
+Prometheus+Grafana is configured to run by default alongside the API. Prometheus collects and stores various metrics from the API, and Grafana visualizes these metrics in dashboards for monitoring. Additionally, AlertManager is integrated with Prometheus to send our alerts for critical issues via Slack.
 
-NOTE: Prometheus+Grafana is only available when the project is running inside Docker.
+NOTE: These services are only available when the project is running inside Docker.
 
 ### Grafana
 
@@ -86,6 +86,10 @@ Usename: **admin** Password: **pass@123**
 ### Prometheus
 
 Access Prometheus at `http://<ip-of-the-virtual-machine>:9090`.
+
+### AlertManager
+
+Access AlertManager at `http://<ip-of-the-virtual-machine>:9093`.
 
 ## Testing
 
