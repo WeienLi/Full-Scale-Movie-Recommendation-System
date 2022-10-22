@@ -4,6 +4,7 @@ services:
   flask_api:
     build: .
     container_name: flask_api
+    restart: unless-stopped
     ports:
       - "8082:8082"
     networks:
@@ -13,12 +14,13 @@ services:
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus-db
+    restart: unless-stopped
     ports:
       - 9090:9090
     volumes:
       - ./Monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
+      - ./Monitoring/alerts.yml:/etc/prometheus/alerts.yml
+    command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yml
     networks:
       team3-network:
         ipv4_address: 172.16.238.11
@@ -26,6 +28,7 @@ services:
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
+    restart: unless-stopped
     depends_on:
       - prometheus
     ports:
@@ -39,6 +42,19 @@ services:
     networks:
       team3-network:
         ipv4_address: 172.16.238.12
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    restart: unless-stopped
+    ports:
+      - "9093:9093"
+    volumes:
+      - "./Monitoring/alertmanager.yml:/config/alertmanager.yml"
+    command: --config.file=/config/alertmanager.yml --log.level=debug
+    networks:
+      team3-network:
+        ipv4_address: 172.16.238.13
 
 networks:
   team3-network:
