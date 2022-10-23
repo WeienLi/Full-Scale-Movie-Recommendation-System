@@ -9,4 +9,4 @@ RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 RUN pip install gunicorn
 
-CMD  ["gunicorn", "-w", "2", "--bind", "0.0.0.0:8082", "--timeout", "90", "flask_API:app", "--log-level", "debug"]
+CMD  ["gunicorn", "-w", "1", "--bind", "0.0.0.0:8082", "--timeout", "90", "flask_API:app", "--log-level", "debug"]

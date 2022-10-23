@@ -91,7 +91,7 @@
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{ path }}",
+          "legendFormat": "{{ metrics_rule }}",
           "refId": "A"
         }
       ],
@@ -388,7 +388,7 @@
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{ path }}",
+          "legendFormat": "{{ metrics_rule }}",
           "refId": "A"
         }
       ],
@@ -488,7 +488,7 @@
           "instant": false,
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{ path }}",
+          "legendFormat": "{{ metrics_rule }}",
           "refId": "A"
         }
       ],
@@ -681,7 +681,7 @@
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{ path }}",
+          "legendFormat": "{{ metrics_rule }}",
           "refId": "A"
         }
       ],
@@ -873,7 +873,7 @@
           "format": "time_series",
           "interval": "",
           "intervalFactor": 1,
-          "legendFormat": "{{ path }}",
+          "legendFormat": "{{ metrics_rule }}",
           "refId": "A"
         }
       ],
