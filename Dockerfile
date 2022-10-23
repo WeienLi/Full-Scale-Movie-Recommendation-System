@@ -1,6 +1,9 @@
-FROM jupyter/pyspark-notebook:latest
+FROM python:alpine
+
+WORKDIR /Team-3
 
 COPY . .
 RUN pip3 install -r requirements.txt
+RUN pip3 install gunicorn
 
-CMD  ["python", "-m", "flask", "--app=flask_API/main.py", "run", "--host=0.0.0.0", "--port=8082"]
+CMD  ["gunicorn", "-w", "2", "--bind", "0.0.0.0:8082", "flask_API:app"]
