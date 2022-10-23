@@ -35,5 +35,14 @@ jobs:
         with:
           script: |
             cd ${{ env.FOLDER_NAME }}
-            ./docker.sh reset
+            git diff --name-only HEAD^ HEAD > files.txt
+            while IFS= read -r file
+            do
+                if [[ $file == Monitoring/* ]]; then
+                    echo "Changes detected in /Monitoring. Clearning out all Docker containers"
+                    ./docker.sh reset
+                    break
+                fi
+            done < files.txt
+            rm files.txt
             ./docker.sh start
