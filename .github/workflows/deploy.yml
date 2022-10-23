@@ -35,4 +35,5 @@ jobs:
         with:
           script: |
             cd ${{ env.FOLDER_NAME }}
+            ./docker.sh reset
             ./docker.sh start
