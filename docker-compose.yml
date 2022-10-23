@@ -6,7 +6,7 @@ services:
     container_name: flask_api
     restart: unless-stopped
     ports:
-      - "8082:8082"
+      - 8082:8082
     networks:
       team3-network:
         ipv4_address: 172.16.238.10

@@ -32,7 +32,7 @@ function start() {
     stop
 
     echo "Starting new containers..."
-    docker-compose up -d
+    docker-compose up -d --build
 }
 
 # remove all Docker containers, images, and volumes associated with the project
