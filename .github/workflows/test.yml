@@ -6,7 +6,15 @@ on:
       - "*"
 
 jobs:
-  test:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: ./docker.sh start
+
+  unit-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
