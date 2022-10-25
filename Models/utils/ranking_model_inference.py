@@ -178,7 +178,7 @@ class RecRankModel(tfrs.models.Model):
         # The task computes the loss and the metrics.
         return self.task(labels=labels, predictions=rating_predictions)
 
-def get_model():
+def get_model(path = 'utils/unique_values/'):
     
     global unique_movie_titles
     global unique_years_binned
@@ -189,14 +189,14 @@ def get_model():
     global unique_languages 
     global unique_occupations 
     
-    unique_movie_titles = list(np.loadtxt('utils/unique_values/unique_movie_titles.txt', dtype=str))
-    unique_years_binned = list(np.loadtxt('utils/unique_values/unique_years_binned.txt', dtype=float))
-    unique_lengths_binned = list(np.loadtxt('utils/unique_values/unique_lengths_binned.txt', dtype=float))
-    unique_user_ids = list(np.loadtxt('utils/unique_values/unique_user_ids.txt', dtype=str))
-    unique_user_genders = list(np.loadtxt('utils/unique_values/unique_user_genders.txt', dtype=str))
-    unique_user_ages_binned = list(np.loadtxt('utils/unique_values/unique_user_ages_binned.txt', dtype=float))
-    unique_languages = list(np.loadtxt('utils/unique_values/unique_languages.txt', dtype=str))
-    unique_occupations = list(np.loadtxt('utils/unique_values/unique_occupations.txt',delimiter='\n', dtype=str))
+    unique_movie_titles = list(np.loadtxt(path + 'unique_movie_titles.txt', dtype=str))
+    unique_years_binned = list(np.loadtxt(path + 'unique_years_binned.txt', dtype=float))
+    unique_lengths_binned = list(np.loadtxt(path + 'unique_lengths_binned.txt', dtype=float))
+    unique_user_ids = list(np.loadtxt(path + 'unique_user_ids.txt', dtype=str))
+    unique_user_genders = list(np.loadtxt(path + 'unique_user_genders.txt', dtype=str))
+    unique_user_ages_binned = list(np.loadtxt(path + 'unique_user_ages_binned.txt', dtype=float))
+    unique_languages = list(np.loadtxt(path + 'unique_languages.txt', dtype=str))
+    unique_occupations = list(np.loadtxt(path + 'unique_occupations.txt',delimiter='\n', dtype=str))
     
     model = RecRankModel()
     
