@@ -1,4 +1,4 @@
 Flask==2.2.2
 prometheus_flask_exporter==0.20.3
-tensorflow==2.9.2
+tensorflow==2.10.0
 tensorflow_recommenders
