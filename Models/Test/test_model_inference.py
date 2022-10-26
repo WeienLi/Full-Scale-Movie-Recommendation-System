@@ -17,12 +17,12 @@ def test_my_test():
 def test_load_model():
     try:
         global model_retrieval,model_ranking,movies
-        model_retrieval =  tf.saved_model.load('../model_retrieval')
-        model_ranking = get_model('../utils/unique_values/')
-        model_ranking.load_weights("../model_rank/ranking.ckpt")
+        model_retrieval =  tf.saved_model.load('Models/model_retrieval')
+        model_ranking = get_model('Models/utils/unique_values/')
+        model_ranking.load_weights("Models/model_rank/ranking.ckpt")
         #print(type(model_ranking))
         #print(type(model_retrieval))
-        movies = pd.read_csv('../../Datasets/data_movie_processed.csv', sep=';')
+        movies = pd.read_csv('Datasets/data_movie_processed.csv', sep=';')
     except Exception as exc:
         assert False
 
@@ -81,7 +81,6 @@ def test_retrieval3():
         'user_occupation': tf.constant([user_occupation]) }
     _,titles = model_retrieval(user)
     t1 = titles[0,]
-    print(t1[0].numpy())
     assert type(t1[0].numpy()) == bytes
 
 def test_ranking2():
