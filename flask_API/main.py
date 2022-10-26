@@ -24,4 +24,4 @@ def hello_world():
 @app.route("/recommend/<userID>", methods=["GET"])
 def getRecommendations(userID):
     movie_list = recommendMovies(userID)
-    return ", ".join(movie_list)
+    return ",".join(movie_list)
