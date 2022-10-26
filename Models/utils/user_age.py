@@ -1,4 +1,3 @@
-
 def binAge(user_age):
     age_binned = 0
     if user_age < 18:

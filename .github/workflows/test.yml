@@ -6,13 +6,17 @@ on:
       - "*"
 
 jobs:
-  build-test:
+  lint-test:
     runs-on: ubuntu-latest
+    env:
+      MAX_LINE_LENGHT: "200"
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Build Docker image
-        run: ./docker.sh start
+      - uses: actions/checkout@v1
+      - uses: ricardochaves/python-lint@master
+        with:
+          use-mypy: false
+          extra-pycodestyle-options: "--max-line-length=${{ env.MAX_LINE_LENGHT }}"
+          extra-flake8-options: "--max-line-length=${{ env.MAX_LINE_LENGHT }}"
 
   unit-test:
     runs-on: ubuntu-latest
@@ -39,3 +43,11 @@ jobs:
         with:
           pytest-coverage-path: ./pytest-coverage.txt
           junitxml-path: ./pytest.xml
+
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: ./docker.sh start
