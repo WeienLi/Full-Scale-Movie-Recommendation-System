@@ -95,4 +95,4 @@ def readKafkaStream(streamType: MessageType, numberOfLogs: int, consumer):
     # df.to_csv (r'data.csv', index = False, header=True)
 
 
-# readKafkaStream(MessageType, 1000, consumer)
+# readKafkaStream(MessageType.RATING, 10, consumer)
