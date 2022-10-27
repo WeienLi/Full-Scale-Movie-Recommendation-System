@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import pytest
 import tensorflow as tf
 
 from Models.utils.input_ranking import inputRanking
@@ -17,8 +18,6 @@ def test_load_model():
         model_retrieval = tf.saved_model.load("Models/model_retrieval")
         model_ranking = get_model("Models/utils/unique_values/")
         model_ranking.load_weights("Models/model_rank/ranking.ckpt")
-        # print(type(model_ranking))
-        # print(type(model_retrieval))
         movies = pd.read_csv("Datasets/data_movie_processed.csv", sep=";")
     except Exception:
         assert False
@@ -47,6 +46,7 @@ def test_retrieval():
     )
 
 
+@pytest.mark.skip(reason="Not using ranking model right now")
 def test_ranking():
     userID = b"1"
     user_age = 34
@@ -97,6 +97,7 @@ def test_retrieval3():
     assert type(t1[0].numpy()) == bytes
 
 
+@pytest.mark.skip(reason="Not using ranking model right now")
 def test_ranking2():
     userID = b"1"
     user_age = 34
@@ -115,6 +116,7 @@ def test_ranking2():
     assert type(pred2[0, 0]) == np.float32 and type(pred4[0, 0]) == np.float32
 
 
+@pytest.mark.skip(reason="Not using ranking model right now")
 def test_ranking3():
     userID = None
     user_age = 34

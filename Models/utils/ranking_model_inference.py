@@ -1,8 +1,11 @@
+import os
 from typing import Dict, Text
 
 import numpy as np
 import tensorflow as tf
 import tensorflow_recommenders as tfrs
+
+self_dir = os.path.dirname(__file__)
 
 
 class RankingModel(tf.keras.Model):
@@ -239,8 +242,7 @@ class RecRankModel(tfrs.models.Model):
         return self.task(labels=labels, predictions=rating_predictions)
 
 
-def get_model(path="utils/unique_values/"):
-
+def get_model(path=os.path.join(self_dir, "unique_values/")):
     global unique_movie_titles
     global unique_years_binned
     global unique_lengths_binned
