@@ -14,8 +14,11 @@ def test_read_kafka():
 def test_readKafkaStream():
     print("test_readKafkaStream")
     try:
-        readKafkaStream(MessageType.RATING, 1000)
-        readKafkaStream(MessageType.WATCHTIME, 1000)
+        print("mocked logs")
+        file = open("mock_logs.csv", "r")
+        consumer = file.readlines()
+        readKafkaStream(MessageType.RATING, 1000, consumer)
+        readKafkaStream(MessageType.WATCHTIME, 1000, consumer)
         assert True
     except Exception as e:
         print(e)

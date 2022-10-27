@@ -20,7 +20,7 @@ except Exception as e:
 
 
 # MessageType.RATING or MessageType.WATCHTIME
-def readKafkaStream(streamType: MessageType, numberOfLogs: int):
+def readKafkaStream(streamType: MessageType, numberOfLogs: int, consumer):
 
     start = time.time()
     if streamType == MessageType.RATING:
@@ -93,4 +93,4 @@ def readKafkaStream(streamType: MessageType, numberOfLogs: int):
     # df.to_csv (r'data.csv', index = False, header=True)
 
 
-# readKafkaStream(MessageType, 1000)
+# readKafkaStream(MessageType, 1000, consumer)
