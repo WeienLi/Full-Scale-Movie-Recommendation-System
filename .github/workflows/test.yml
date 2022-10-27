@@ -1,12 +1,14 @@
-name: Run tests
+name: Test
 
 on:
+  push:
+    branches: ["main"]
   pull_request:
     branches:
       - "*"
 
 jobs:
-  lint-test:
+  lint:
     runs-on: ubuntu-latest
     env:
       MAX_LINE_LENGHT: "200"
@@ -18,8 +20,22 @@ jobs:
           extra-pycodestyle-options: "--max-line-length=${{ env.MAX_LINE_LENGHT }}"
           extra-flake8-options: "--max-line-length=${{ env.MAX_LINE_LENGHT }}"
 
-  unit-test:
+      - name: Create comment
+        if: ${{ failure() }}
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            ### Lint tests failed ❌
+            To fix this, run the following from the root directory  
+            ```
+            ./lint.sh
+            ```
+
+  unit:
     runs-on: ubuntu-latest
+    env:
+      MIN_PERCENT_COVERAGE: 70
     steps:
       - uses: actions/checkout@v3
 
@@ -27,25 +43,32 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.8
+          cache: "pip"
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install flake8 pytest pytest-cov
+          pip install pytest pytest-cov
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           if [ -f dev-requirements.txt ]; then pip install -r dev-requirements.txt; fi
 
-      - name: Build coverage file
+      - name: Run tests and build coverage file
         run: |
-          pytest --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=. ./ | tee pytest-coverage.txt
+          failed=0
+          pytest --cov-fail-under=${{ env.MIN_PERCENT_COVERAGE }} --junitxml=pytest.xml --cov-report=term-missing:skip-covered --cov=. ./ > pytest-coverage.txt || failed=1
+          cat pytest-coverage.txt
+          if [ $failed -ne 0 ]; then
+              exit 1
+          fi
 
       - name: Pytest coverage comment
+        if: ${{ always() }}
         uses: MishaKav/pytest-coverage-comment@main
         with:
           pytest-coverage-path: ./pytest-coverage.txt
           junitxml-path: ./pytest.xml
 
-  build-test:
+  build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
