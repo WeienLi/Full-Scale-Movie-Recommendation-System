@@ -5,6 +5,7 @@ from utils.constants import MessageType
 
 sys.path.append("..")
 
+
 def test_read_kafka():
     print("test_read_kafka")
     assert True
