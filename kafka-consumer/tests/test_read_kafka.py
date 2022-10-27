@@ -12,9 +12,10 @@ def test_read_kafka():
 
 
 def test_readKafkaStream():
+    print("test_readKafkaStream")
     try:
-        readKafkaStream(MessageType.RATING, 100)
-        readKafkaStream(MessageType.WATCHTIME, 100)
+        readKafkaStream(MessageType.RATING, 1000)
+        readKafkaStream(MessageType.WATCHTIME, 1000)
         assert True
     except Exception as e:
         print(e)

@@ -11,29 +11,27 @@ def parse_message(message):
         user = message[1]
         if "GET /rate/" in message[2]:
             type = MessageType.RATING
+            movieId = "+"
+            rating = 0
             try:
                 movieId = message[2].split("=")[0].split("/")[-1]
                 rating = int(message[2].split("=")[1])
                 # some logs are corrupted
                 # ValueError: invalid literal for int() with base 10: ‘E’
-            except Exception as e:
-                print(e)
-                movieId = "+"
-                rating = 0
+            except Exception:
                 type = MessageType.BROKEN
             return [type, time, user, movieId, rating]
 
         else:
             type = MessageType.WATCHTIME
+            minute = 0
+            movieId = 0
             try:
                 movieId = message[2].split("/")[3]
                 minute = int(message[2].split("/")[4].split(".")[0])
                 # sometimes this int() casting will fail
                 # ‘GET /data/m/the+tulse+luper+suitcases_+part+1+the+moab+story+2003/6x1.mpg’]
-            except Exception as e:
-                print(e)
-                minute = 0
-                movieId = 0
+            except Exception:
                 type = MessageType.BROKEN
             return [type, time, user, movieId, minute]
     elif len(message) == 25:
