@@ -44,9 +44,6 @@ def test_readKafkaStream():
 
     print("test_readKafkaStream")
     try:
-        print("mocked logs")
-        file = open("mock_logs.csv", "r")
-        consumer = file.readlines()
         readKafkaStream(MessageType.RATING, 5, consumer)
         readKafkaStream(MessageType.WATCHTIME, 5, consumer)
         assert True
