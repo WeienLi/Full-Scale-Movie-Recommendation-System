@@ -1,6 +1,6 @@
 import pandas as pd
 
-# data.csv is data used for training M1 ALS model. Do not care
+# data_movie. Do not care => check data_movie_processed
 
 # Test rest:
 # data_movie_processed.csv is used for M2. Checking for NA, binng age 1 to 5, splitting genre 0 or 1,
@@ -79,21 +79,121 @@ def test_data_movie_processed():
 # They should have vote_average > 6 and popularity > 1
 def test_candidates():
     movies = pd.read_csv("candidates.csv", sep=",")
-
     v_a = list(movies["vote_average"])
     popular = list(movies["popularity"])
-
     v_a.sort()
     popular.sort()
-
     if not v_a[0] > 6.0:
         assert False
-
     if not popular[0] > 1.0:
+        assert False
+    assert True
+
+
+# check movie data: has Na, has duplicate
+def test_data_user():
+    movies = pd.read_csv("data_user.csv", sep=";")
+    columns = "userID;age;occupation;gender".split(";")
+
+    for name in columns:
+        has_NA = movies[name].isnull().sum()
+
+        if has_NA > 0:
+            print(name)
+            print("has null: " + str(has_NA))
+            assert False
+
+    ages = list(movies["age"])
+    ages.sort()
+    if ages[0] < 0:
+        assert False
+
+    if ages[-1] > 200:
+        assert False
+
+    gender = list(movies["gender"])
+    set_gender = set(gender)
+
+    genders = set(["M", "F"])
+    if len(set_gender) == 2 and set_gender.issubset(genders):
+        pass
+    else:
         assert False
 
     assert True
 
 
-# test_data_movie_processed()
-# test_candidates()
+# check data_watched.csv
+# check NA
+# check watchtime is larger than 10
+def test_data_watched():
+    movies = pd.read_csv("data_watched.csv", sep=",")
+    columns = list(movies.columns)
+    for name in columns:
+        has_NA = movies[name].isnull().sum()
+
+        if has_NA > 0:
+            print(name)
+            print("has null: " + str(has_NA))
+            assert False
+
+    watchTime = list(movies["watchTime"])
+    watchTime.sort()
+
+    if watchTime[0] < 10:
+        assert False
+
+    assert True
+
+
+# check data_watched.csv
+# check NA
+# check watchtime is larger than 10
+def test_data():
+    movies = pd.read_csv("data.csv", sep=",")
+    columns = list(movies.columns)
+    for name in columns:
+        has_NA = movies[name].isnull().sum()
+
+        if has_NA > 0:
+            print(name)
+            print("has null: " + str(has_NA))
+            assert False
+
+    rating = movies["ratings"]
+    set_rating = set(rating)
+    rating_value = set([0, 1, 2, 3, 4, 5])
+    overlap = set_rating.intersection(rating_value)
+    if not len(overlap) == len(set_rating):
+        print("set_rating has strange value!")
+        assert False
+
+    assert True
+
+
+def test_watched_rating_1():
+    movies = pd.read_csv("watched_rating_1.csv", sep=",")
+    columns = list(movies.columns)
+    for name in columns:
+        has_NA = movies[name].isnull().sum()
+
+        if has_NA > 0:
+            print(name)
+            print("has null: " + str(has_NA))
+            assert False
+
+    assert True
+
+
+def test_watched_rating_2():
+    movies = pd.read_csv("watched_rating_2.csv", sep=",")
+    columns = list(movies.columns)
+    for name in columns:
+        has_NA = movies[name].isnull().sum()
+
+        if has_NA > 0:
+            print(name)
+            print("has null: " + str(has_NA))
+            assert False
+
+    assert True
