@@ -62,15 +62,16 @@ def findRecommendationIdFromUserId(userId, recommendation_list):
     return output_list
 
 
+# Not needed
 # create file name with recommendation index
-def fileNameByIndex(index: int):
-    file = "online_eval_data/" + str(index) + ".csv"
-    return file
+# def fileNameByIndex(index: int):
+#     file = "online_eval_data/" + str(index) + ".csv"
+#     return file
 
 
 # end the evaluation process if all rec has done collecting info.
 # recommendation_list: list[recommendation]
-def shouldEndEval(recommendations_list, data_files, time_span):
+def shouldEndEval(recommendations_list, time_span):
 
     nonFinished = 0
 
@@ -80,8 +81,6 @@ def shouldEndEval(recommendations_list, data_files, time_span):
         if (rec.time_spam_finished) is False and (
             current_time - rec.created_time > time_span
         ):
-            file = data_files[rec.index]
-            file.close()
             rec.time_spam_finished = True
             print("time spam finsihed")
 
@@ -126,7 +125,7 @@ def get_recommendation_request_feedback(num_recommendation, time_span, consumer)
     recommendatin_index = (
         0  # index of recommendation request. Help to store infomation into file i/o
     )
-    data_files = []  # store list of opened file
+    # data_files = []  # store list of opened file
 
     timer_time = time.time()  # help to indiate executing time
     timer = 0  # same as the above one
@@ -155,9 +154,9 @@ def get_recommendation_request_feedback(num_recommendation, time_span, consumer)
                     )
                     recommendatins.append(rec)
 
-                    file = fileNameByIndex(recommendatin_index)
-                    data_file = open(file, "w")
-                    data_files.append(data_file)
+                    # file = fileNameByIndex(recommendatin_index)
+                    # data_file = open(file, "w")
+                    # data_files.append(data_file)
                     recommendatin_index += 1
                     print("add recommendation!")
 
@@ -169,7 +168,8 @@ def get_recommendation_request_feedback(num_recommendation, time_span, consumer)
                     )
                     for rec in recommendations:
 
-                        rec.watch_movie.append(parsed_message[3])
+                        if rec.time_spam_finished is False:
+                            rec.watch_movie.append(parsed_message[3])
 
                         # file = data_files[index]
                         # min = parsed_message[4]
@@ -195,7 +195,7 @@ def get_recommendation_request_feedback(num_recommendation, time_span, consumer)
 
                 # end for loop if all recommendation request has done collecting logs. i.e. time-spam is done
                 if (
-                    shouldEndEval(recommendatins, data_files, time_span)
+                    shouldEndEval(recommendatins, time_span)
                     and len(recommendatins) == num_recommendation
                 ):
                     break
@@ -228,16 +228,19 @@ def calculate_MRR(recommendations_list):
                 unique_watch_movie.append(i)
 
         Q = len(unique_watch_movie)
-        MRR = 0.0
-        for watch_movie in unique_watch_movie:
-            try:
-                rank = unique_rec_movie.index(watch_movie)
-                rank = rank + 1
-                MRR = MRR + 1 / rank
-            except Exception:
-                rank = 0
+        if Q != 0:
+            MRR = 0.0
+            for watch_movie in unique_watch_movie:
+                try:
+                    rank = unique_rec_movie.index(watch_movie)
+                    rank = rank + 1
+                    MRR = MRR + 1 / rank
+                except Exception:
+                    rank = 0
+            MRR = MRR / Q
+        else:
+            MRR = 0.0
 
-        MRR = MRR / Q
         accpet_rates.append(MRR)
 
     return accpet_rates
