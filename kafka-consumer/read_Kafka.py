@@ -4,18 +4,22 @@ from pykafka import KafkaClient
 from utils.constants import MessageType
 from utils.message_parser import parse_message
 
-HOST = "fall2022-comp585.cs.mcgill.ca:9092"  # HOST to connect to
-TOPIC = "movielog3"  # Topic to read from
 
-client = KafkaClient(hosts=HOST)
-topic = client.topics[TOPIC]
-consumer = topic.get_simple_consumer()
-print("Connected to Kafka host: ", HOST)
-print("Reading from topic: ", TOPIC)
+# unable to test this on github action
+def get_consumer():
+
+    HOST = "fall2022-comp585.cs.mcgill.ca:9092"  # HOST to connect to
+    TOPIC = "movielog3"  # Topic to read from
+    client = KafkaClient(hosts=HOST)
+    topic = client.topics[TOPIC]
+    consumer = topic.get_simple_consumer()
+    print("Get production consumer")
+    return consumer
 
 
 # MessageType.RATING or MessageType.WATCHTIME
-def readKafkaStream(streamType: MessageType, numberOfLogs: int):
+def readKafkaStream(streamType: MessageType, numberOfLogs: int, consumer):
+
     start = time.time()
     if streamType == MessageType.RATING:
         ratingOrWatchtime = "rating"
@@ -37,32 +41,30 @@ def readKafkaStream(streamType: MessageType, numberOfLogs: int):
     for message in consumer:
 
         if message is not None:
-            text = message.value.decode("utf-8")
+            try:
+                text = message.value.decode(
+                    "utf-8"
+                )  # if it is real log, it will go here
+            except Exception:
+                # if it is mock log, it is already string
+                text = message.replace("\n", "")
+
+            # data_file.write(text + "\n")
+
             parsed_message = parse_message(text)
 
-            # currently, we will encounter recommendation log, but it will give error:
-            # Invalid message:  ['2022-09-27T02:33:53.863', '276020', 'recommendation request fall2022-comp585-3.cs.mcgill.ca:8082', ' status 0',
-            # ' result: java.net.ConnectException: connection timed out: fall2022-comp585-3.cs.mcgill.ca/132.206.51.206:8082', ' 818 ms']
-            # Therefore, use try block to avoid None result.
-            try:
-                message_type = parsed_message[2]
-            except Exception:
-                message_type = MessageType.RECOMMEND
+            message_type = parsed_message[0]
 
-            if message_type != streamType:
-                continue
-            # print(parse_message(text))
-
-            time_stamp, user, type, movieId, rating_minute = parse_message(text)
-
-            if streamType == MessageType.RATING:
+            if streamType == MessageType.RATING and message_type == streamType:
+                type, time_stamp, user, movieId, rating_minute = parse_message(text)
                 # If reading rating,
                 # directly insert new row to the dataframe
                 # df.loc[len(df.index)] = [user, movieId, rating_minute]
                 line = str(user) + "," + str(movieId) + "," + str(rating_minute) + "\n"
                 data_file.write(line)
-            else:
-
+                count += 1
+            elif streamType == MessageType.WATCHTIME and message_type == streamType:
+                type, time_stamp, user, movieId, rating_minute = parse_message(text)
                 # set up threshold
                 if int(rating_minute) >= 10:
                     # df.loc[len(df.index)] = [user, movieId, rating_minute]
@@ -70,50 +72,23 @@ def readKafkaStream(streamType: MessageType, numberOfLogs: int):
                         str(user) + "," + str(movieId) + "," + str(rating_minute) + "\n"
                     )
                     data_file.write(line)
-                else:
-                    count -= 1  # to compensate the log that is filtered out.
+                    count += 1
+            else:
+                pass
 
-            count += 1
-            if count % 1000 == 0:
+            if count % 100 == 0:
                 print("----------------------------------------------")
                 print(count, " / ", numberOfLogs)
                 end = time.time()
                 print("Total time consumed (in sec): ", (end - start))
                 print("----------------------------------------------")
+
             if count >= numberOfLogs:
+                print("reading logs: " + str(numberOfLogs) + " is done")
                 break
     data_file.close()
 
     # df.to_csv (r'data.csv', index = False, header=True)
 
 
-readKafkaStream(MessageType.WATCHTIME, 100000)
-
-# count = 0
-# start = time.time()
-# for message in consumer:
-#     if message is not None:
-#         text = message.value.decode('utf-8')
-#         parsed_message = parse_message(text)
-
-#         try:
-#             message_type = parsed_message[2]
-#         except:
-#             message_type = MessageType.RECOMMEND
-
-#         if message_type != TYPE_STEAM:
-#             continue
-#         #print(parse_message(text))
-
-#         time_stamp, user, type, movieId, rating_minute = parse_message(text)
-#         df.loc[len(df.index)] = [user, movieId, rating_minute]          # insert new row to the dataframe
-
-#         count += 1
-#         if count % 100 == 0:
-#             print(count, " / ", LIMIT)
-#             end = time.time()
-#             print("time consumed from start:", end - start)
-#         if count >= LIMIT:
-#             break
-
-# df.to_csv (r'data.csv', index = False, header=True)
+# readKafkaStream(MessageType.RATING, 10, consumer)

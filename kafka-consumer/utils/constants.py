@@ -7,3 +7,4 @@ class MessageType(Enum):
     RECOMMEND = "recommend"
     WATCHTIME = "watchtime"
     RATING = "rating"
+    BROKEN = "broken"
