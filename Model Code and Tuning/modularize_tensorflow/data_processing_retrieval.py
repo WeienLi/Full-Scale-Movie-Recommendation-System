@@ -125,4 +125,4 @@ def get_train_test_size(watched, percentage=80):
     N = watched.shape[0]
     N_train = N * percentage // 100
     N_test = N - N_train
-    return N_train, N_test
+    return N, N_train, N_test

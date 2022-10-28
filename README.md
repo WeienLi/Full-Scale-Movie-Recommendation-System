@@ -106,3 +106,11 @@ python -m pytest
 ```
 python -m pytest --cov=.
 ```
+
+## Continous Intergration
+
+#### Run Continous Intergration Code
+
+```
+python "Model Code and Tuning"/modularize_tensorflow/Continous_Intergration_main.py
+```

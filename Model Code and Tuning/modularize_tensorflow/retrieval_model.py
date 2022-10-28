@@ -1,6 +1,39 @@
+import logging
+
 import numpy as np
 import tensorflow as tf
 import tensorflow_recommenders as tfrs
+import wandb
+
+tf.get_logger().setLevel(logging.ERROR)
+
+
+def get_unique_value(
+    unique_movie_titles1,
+    unique_years_binned1,
+    unique_lengths_binned1,
+    unique_user_ids1,
+    unique_user_genders1,
+    unique_user_ages_binned1,
+    unique_languages1,
+    unique_occupations1,
+):
+    global unique_movie_titles
+    global unique_years_binned
+    global unique_lengths_binned
+    global unique_user_ids
+    global unique_user_genders
+    global unique_user_ages_binned
+    global unique_languages
+    global unique_occupations
+    unique_movie_titles = unique_movie_titles1
+    unique_years_binned = unique_years_binned1
+    unique_lengths_binned = unique_lengths_binned1
+    unique_user_ids = unique_user_ids1
+    unique_user_genders = unique_user_genders1
+    unique_user_ages_binned = unique_user_ages_binned1
+    unique_languages = unique_languages1
+    unique_occupations = unique_occupations1
 
 
 def create_tensorflow_datasets(watched_i, movies_i):
@@ -76,7 +109,7 @@ def create_tensorflow_datasets(watched_i, movies_i):
     return watched, movies
 
 
-def train_test_split(N_train, N_test, seed=42):
+def train_test_split(N, N_train, N_test, seed=42):
     """
     splitting the tensor dataset to cached training and testing
     :param N_train: number of training data we would like
@@ -85,24 +118,21 @@ def train_test_split(N_train, N_test, seed=42):
     :return: the cached training and testing data
     """
     tf.random.set_seed(seed)
-    N = watched.shape[0]
     shuffled = watched.shuffle(N, seed=seed, reshuffle_each_iteration=False)
 
     train = shuffled.take(N_train)
     test = shuffled.skip(N_train).take(N_test)
 
-    cached_train = train.shuffle(N_train).batch(8192).cache()
-    cached_test = test.batch(8192).cache()
+    cached_train = train.shuffle(N_train).batch(64).cache()  # 8192
+    cached_test = test.batch(64).cache()
     return cached_train, cached_test
 
 
-def compute_unique():
+def compute_unique(N_movies, N):
     """
     Compute the unique values for both the watched and movies tensor dataset so it can be used as dictionary
     in the model's String and Integer lookup
     """
-    N_movies = movies.shape[0]
-    N = watched.shape[0]
     global unique_movie_titles, unique_years_binned, unique_lengths_binned, unique_user_ids, unique_user_genders, unique_user_ages_binned, unique_languages, unique_occupations
     movie_titles = movies.batch(N_movies).map(lambda x: x["candidate_title"])
     years_binned = movies.batch(N_movies).map(lambda x: x["candidate_year_binned"])
@@ -340,7 +370,7 @@ class RecRetModel(tfrs.Model):
 
         self.task = tfrs.tasks.Retrieval(
             metrics=tfrs.metrics.FactorizedTopK(
-                candidates=movies.batch(30000).map(self.candidate_model),
+                candidates=movies.batch(30000).map(self.candidate_model),  # 30000
                 ks=(5, 20, 500),
             ),
         )
@@ -396,7 +426,7 @@ class RecRetModel(tfrs.Model):
         return self.task(query_embeddings, movie_embeddings)
 
 
-def train_retrieval(cached_train, cached_test, layer_size=32, lr=0.2):
+def train_retrieval(wnb, cached_train, cached_test, layer_size=32, lr=0.2, epoch=50):
     """
     train the retrieval model defined above with layer_size and cached_train and validate it using the cached_test
     :param cached_train: tensor data used for training
@@ -405,9 +435,18 @@ def train_retrieval(cached_train, cached_test, layer_size=32, lr=0.2):
     :param lr: learning rate of the Adam gradient descent
     :return: trained retriveal model
     """
-    model_1 = RecRetModel([layer_size])
-    model_1.compile(optimizer=tf.keras.optimizers.Adagrad(learning_rate=lr))
-    model_1.fit(cached_train, epochs=50, validation_data=cached_test)
+
+    if wnb:
+        # wandb.login()
+        wandb.init(project="my-test--retrieval-project")
+        wandb_callback = wandb.keras.WandbCallback()
+        model_wb = RecRetModel([layer_size])
+        model_wb.compile(optimizer=tf.keras.optimizers.Adagrad(learning_rate=lr))
+        model_wb.fit(cached_train, epochs=epoch, callbacks=[wandb_callback])
+    else:
+        model_1 = RecRetModel([layer_size])
+        model_1.compile(optimizer=tf.keras.optimizers.Adagrad(learning_rate=lr))
+        model_1.fit(cached_train, epochs=epoch, validation_data=cached_test, verbose=1)
     return model_1
 
 

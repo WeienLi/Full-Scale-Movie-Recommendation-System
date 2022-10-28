@@ -71,18 +71,16 @@ def compute_unique(N):
     Compute the unique values for both the ratings tensor dataset so it can be used as dictionary
     in the model's String and Integer lookup
     """
-    global unique_movie_titles, unique_years_binned, unique_lengths_binned
-    global unique_user_ids, unique_user_genders, unique_user_ages_binned
-    global unique_languages, unique_occupations
+    global unique_movie_titles, unique_years_binned, unique_lengths_binned, unique_user_ids, unique_user_genders, unique_user_ages_binned, unique_occupations, unique_languages
 
     movie_titles = ratings.batch(N).map(lambda x: x["movie_title"])
     years_binned = ratings.batch(N).map(lambda x: x["movie_year_binned"])
     lengths_binned = ratings.batch(N).map(lambda x: x["movie_length_binned"])
-    languages = ratings.batch(N).map(lambda x: x["movie_language"])
-    occupations = ratings.batch(N).map(lambda x: x["user_occupation"])
     user_ids = ratings.batch(N).map(lambda x: x["user_id"])
     user_genders = ratings.batch(N).map(lambda x: x["user_gender"])
     user_ages_binned = ratings.batch(N).map(lambda x: x["user_age_binned"])
+    occupations = ratings.batch(N).map(lambda x: x["user_occupation"])
+    languages = ratings.batch(N).map(lambda x: x["movie_language"])
 
     unique_movie_titles = np.unique(np.concatenate(list(movie_titles)))
     unique_years_binned = np.unique(np.concatenate(list(years_binned)))
@@ -90,8 +88,8 @@ def compute_unique(N):
     unique_user_ids = np.unique(np.concatenate(list(user_ids)))
     unique_user_genders = np.unique(np.concatenate(list(user_genders)))
     unique_user_ages_binned = np.unique(np.concatenate(list(user_ages_binned)))
-    unique_languages = np.unique(np.concatenate(list(languages)))
     unique_occupations = np.unique(np.concatenate(list(occupations)))
+    unique_languages = np.unique(np.concatenate(list(languages)))
 
 
 class RankingModel(tf.keras.Model):
@@ -330,8 +328,7 @@ class RecRankModel(tfrs.models.Model):
 
 def train_retrieval(cached_train, cached_test, lr=0.1):
     """
-    train the ranking model defined above with learning rate and cached_train
-    and validate it using the cached_test
+    train the ranking model defined above with learning rate and cached_train and validate it using the cached_test
     :param cached_train: tensor data used for training
     :param cached_test: tensor data used for validating
     :param lr: learning rate of the Adam gradient descent
