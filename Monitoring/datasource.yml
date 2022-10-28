@@ -40,3 +40,17 @@ datasources:
     version: 1
     # <bool> allow users to edit datasources from the UI.
     editable: false
+
+  - name: Redis
+    type: redis-datasource
+    access: proxy
+    orgId: 1
+    version: 1
+    url: redis://172.16.238.14:6379
+    jsonData:
+      client: standalone
+      poolSize: 5
+      timeout: 10
+      pingInterval: 0
+      pipelineWindow: 0
+    editable: true

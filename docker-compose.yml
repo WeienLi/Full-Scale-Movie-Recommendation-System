@@ -40,8 +40,10 @@ services:
       - ./Monitoring/datasource.yml:/etc/grafana/provisioning/datasources/default.yml
       - ./Monitoring/dashboard.yml:/etc/grafana/provisioning/dashboards/default.yml
       - ./Monitoring/dashboards:/var/lib/grafana/dashboards
-    env_file:
-      - ./Monitoring/grafana.config
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: pass@123
+      GF_USERS_ALLOW_SIGN_UP: false
+      GF_INSTALL_PLUGINS: redis-app
     networks:
       team3-network:
         ipv4_address: 172.16.238.12
