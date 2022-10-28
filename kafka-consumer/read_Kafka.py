@@ -1,24 +1,20 @@
 import time
 
+from pykafka import KafkaClient
 from utils.constants import MessageType
 from utils.message_parser import parse_message
 
-# comment out for unit test purpose
-# in real production, please uncomment this
 
-# try:
-#     HOST = "fall2022-comp585.cs.mcgill.ca:9092"  # HOST to connect to
-#     TOPIC = "movielog3"  # Topic to read from
-#     client = KafkaClient(hosts=HOST)
-#     topic = client.topics[TOPIC]
-#     consumer = topic.get_simple_consumer()
-#     print("Connected to Kafka host: ", HOST)
-#     print("Reading from topic: ", TOPIC)
-# except Exception as e:
-#     print(e)
-#     print("mocked logs")
-#     file = open("mock_logs.csv", "r")
-#     consumer = file.readlines()
+# unable to test this on github action
+def get_consumer():
+
+    HOST = "fall2022-comp585.cs.mcgill.ca:9092"  # HOST to connect to
+    TOPIC = "movielog3"  # Topic to read from
+    client = KafkaClient(hosts=HOST)
+    topic = client.topics[TOPIC]
+    consumer = topic.get_simple_consumer()
+    print("Get production consumer")
+    return consumer
 
 
 # MessageType.RATING or MessageType.WATCHTIME
