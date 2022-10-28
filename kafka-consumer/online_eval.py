@@ -113,7 +113,7 @@ def shouldEndEval(rec_list: list[recommendation], data_files, time_span):
 
 # input:
 # num of recommendation requests to evaluate
-# time spam for each recommendation to be evaluated within, in seconds
+# time spam for each recommendation to be evaluated within, in seconds e.g. 3600 for reading 1 hour
 
 
 def get_recommendation_request_feedback(num_recommendation, time_span, consumer):
@@ -201,29 +201,67 @@ def get_recommendation_request_feedback(num_recommendation, time_span, consumer)
 
 
 # give a recommendation list
-# check how many movie are watched after recommendation
+# calcuate MRR for each recommendation
+# MRR info: https://en.wikipedia.org/wiki/Mean_reciprocal_rank
 
 
-def calculate_accept_rate(rec_list: list[recommendation]):
+def calculate_MRR(rec_list: list[recommendation]):
     accpet_rates = []
     for rec in rec_list:
-        set_rec_movie = set(rec.movies)
-        set_watch_movie = set(rec.watch_movie)
 
-        movie_from_rec = set_rec_movie.intersection(set_watch_movie)
-        print(len(movie_from_rec))
-        rate = len(movie_from_rec) / 20
-        accpet_rates.append(rate)
+        rec.movies
+        unique_rec_movie = []
+
+        for i in rec.movies:
+            # Add to the new list
+            # only if not present
+            if i not in unique_rec_movie:
+                unique_rec_movie.append(i)
+
+        unique_watch_movie = []
+        for i in rec.watch_movie:
+            # Add to the new list
+            # only if not present
+            if i not in unique_watch_movie:
+                unique_watch_movie.append(i)
+
+        Q = len(unique_watch_movie)
+        MRR = 0.0
+        for watch_movie in unique_watch_movie:
+            try:
+                rank = unique_rec_movie.index(watch_movie)
+                rank = rank + 1
+                MRR = MRR + 1 / rank
+            except Exception:
+                rank = 0
+
+        MRR = MRR / Q
+        accpet_rates.append(MRR)
 
     return accpet_rates
 
 
 # consumer = get_consumer()
+# consumer = [
+#     "2047,2223,re, 200, result: +in+, a, +v, b+a, a+c, a, in+a++w+2010, e+v+1988, q+a+c, the+v+b, w+1, s, d+o, a+v, a+a+a+1949, w, v, b+a, s, 1+s, 107 ms",
+#     "2047,1234,re, 200, result: +in+, a, +v, b+a, a+c, a, in+a++w+2010, e+v+1988, q+a+c, the+v+b, w+1, s, d+o, a+v, a+a+a+1949, w, v, b+a, s, 1+s, 107 ms",
+#     "2047,2211,re, 200, result: +in+, a, +v, b+a, a+c, a, in+a++w+2010, e+v+1988, q+a+c, the+v+b, w+1, s, d+o, a+v, a+a+a+1949, w, v, b+a, s, 1+s, 107 ms",
+#     "2022-10-07T14:21:02,2223,GET /data/m/+in+/17.mpg",
+#     "2022-10-07T14:21:02,2223,GET /data/m/a/17.mpg",
+#     "2022-10-07T14:21:02,2223,GET /data/m/+v/17.mpg",
+#     "2022-10-07T14:21:02,1234,GET /data/m/+v/17.mpg",
+#     "2022-10-07T14:21:02,1234,GET /data/m/e+v+1988/17.mpg",
+#     "2022-10-07T14:21:02,1234,GET /data/m/w+1/17.mpg",
+#     "2022-10-07T14:21:02,2211,GET /data/m/+v/17.mpg",
+#     "2022-10-07T14:21:02,2211,GET /data/m/e+v+1988/17.mpg",
+#     "2022-10-07T14:21:02,2211,GET /data/m/w+1/17.mpg",
+#     "2022-10-07T14:21:02,2211,GET /data/m/in+a++w+2010/17.mpg",
+# ]
 # rec_list = get_recommendation_request_feedback(3, 10, consumer)
 # for rec in rec_list:
 #     print(rec.user)
 #     print(len(rec.watch_movie))
 
-# accpet_rates = calculate_accept_rate(rec_list)
+# accpet_rates = calculate_MRR(rec_list)
 # for r in accpet_rates:
 #     print(r)
