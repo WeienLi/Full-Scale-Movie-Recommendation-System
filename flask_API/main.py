@@ -2,9 +2,12 @@ import requests
 from flask import Flask, abort
 from prometheus_flask_exporter import PrometheusMetrics
 
+from Database.db import RedisDB
 from Models.model_inference import recommendMovies
 
 app = Flask(__name__)
+db = RedisDB()
+
 # Base URL of the external API for fetching user information
 USER_API = "http://fall2022-comp585.cs.mcgill.ca:8080/user/"
 DEFAULT_USER = {
@@ -33,6 +36,12 @@ def hello_world():
 def getRecommendations(userID):
     """Get a list of recommended movies for a given user ID"""
     """Inputs: userID (string)"""
+    # check if recommendations are already in cache
+    recommendations = db.get(userID)
+    if recommendations is not None:
+        db.execute_command("TS.INCRBY", "cache_hits", 1)
+        return recommendations
+
     # get user information from API
     user = DEFAULT_USER
     try:
@@ -57,4 +66,9 @@ def getRecommendations(userID):
     # get recommendations
     print("Getting recommendations for user " + userID)
     movies = recommendMovies(userID, user["age"], user["occupation"], user["gender"])
-    return ",".join(movies)
+    result = ",".join(movies)
+
+    # cache recommendations
+    db.set(userID, result)
+
+    return result
