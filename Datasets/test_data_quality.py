@@ -1,9 +1,5 @@
-import sys
 
 import pandas as pd
-
-sys.path.append("..")
-
 
 # data.csv is data used for training M1 ALS model. Do not care
 
