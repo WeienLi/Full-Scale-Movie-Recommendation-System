@@ -39,8 +39,10 @@ def getRecommendations(userID):
     # check if recommendations are already in cache
     recommendations = db.get(userID)
     if recommendations is not None:
-        db.execute_command("TS.INCRBY", "cache_hits", 1)
+        db.execute_command("TS.INCRBY", "cache:hit", 1)
         return recommendations
+    else:
+        db.execute_command("TS.INCRBY", "cache:miss", 1)
 
     # get user information from API
     user = DEFAULT_USER
