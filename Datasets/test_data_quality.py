@@ -100,5 +100,5 @@ def test_candidates():
     assert True
 
 
-test_data_movie_processed()
-test_candidates()
+# test_data_movie_processed()
+# test_candidates()
