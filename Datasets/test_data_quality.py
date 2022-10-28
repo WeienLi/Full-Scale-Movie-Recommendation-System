@@ -1,4 +1,8 @@
+import os
+
 import pandas as pd
+
+self_dir = os.path.dirname(__file__)
 
 # data_movie. Do not care => check data_movie_processed
 
@@ -14,7 +18,9 @@ def test_data_quality():
 def test_data_movie_processed():
     print("test_movie_processed")
     try:
-        movies = pd.read_csv("data_movie_processed.csv", sep=";")
+        path_to_file = os.path.join(self_dir, "../Datasets/data_movie_processed.csv")
+
+        movies = pd.read_csv(path_to_file, sep=";")
         column_0 = "movieID;vote_average;popularity;original_language".split(";")
         column_1 = "Comedy;Mystery;Crime;Drama;Romance;Documentary;Thriller;Action;Animation".split(
             ";"
@@ -78,7 +84,12 @@ def test_data_movie_processed():
 # check candidates
 # They should have vote_average > 6 and popularity > 1
 def test_candidates():
-    movies = pd.read_csv("candidates.csv", sep=",")
+
+    path_to_file = os.path.join(self_dir, "../Datasets/candidates.csv")
+
+    movies = pd.read_csv(path_to_file, sep=",")
+
+    # movies = pd.read_csv("candidates.csv", sep=",")
     v_a = list(movies["vote_average"])
     popular = list(movies["popularity"])
     v_a.sort()
@@ -92,7 +103,12 @@ def test_candidates():
 
 # check movie data: has Na, has duplicate
 def test_data_user():
-    movies = pd.read_csv("data_user.csv", sep=";")
+
+    path_to_file = os.path.join(self_dir, "../Datasets/data_user.csv")
+
+    movies = pd.read_csv(path_to_file, sep=";")
+
+    # movies = pd.read_csv("data_user.csv", sep=";")
     columns = "userID;age;occupation;gender".split(";")
 
     for name in columns:
@@ -127,7 +143,12 @@ def test_data_user():
 # check NA
 # check watchtime is larger than 10
 def test_data_watched():
-    movies = pd.read_csv("data_watched.csv", sep=",")
+
+    path_to_file = os.path.join(self_dir, "../Datasets/data_watched.csv")
+
+    movies = pd.read_csv(path_to_file, sep=",")
+
+    # movies = pd.read_csv("data_watched.csv", sep=",")
     columns = list(movies.columns)
     for name in columns:
         has_NA = movies[name].isnull().sum()
@@ -150,7 +171,12 @@ def test_data_watched():
 # check NA
 # check watchtime is larger than 10
 def test_data():
-    movies = pd.read_csv("data.csv", sep=",")
+
+    path_to_file = os.path.join(self_dir, "../Datasets/data.csv")
+
+    movies = pd.read_csv(path_to_file, sep=",")
+
+    # movies = pd.read_csv("data.csv", sep=",")
     columns = list(movies.columns)
     for name in columns:
         has_NA = movies[name].isnull().sum()
@@ -172,7 +198,10 @@ def test_data():
 
 
 def test_watched_rating_1():
-    movies = pd.read_csv("watched_rating_1.csv", sep=",")
+    path_to_file = os.path.join(self_dir, "../Datasets/watched_rating_1.csv")
+
+    movies = pd.read_csv(path_to_file, sep=",")
+    # movies = pd.read_csv("watched_rating_1.csv", sep=",")
     columns = list(movies.columns)
     for name in columns:
         has_NA = movies[name].isnull().sum()
@@ -186,7 +215,10 @@ def test_watched_rating_1():
 
 
 def test_watched_rating_2():
-    movies = pd.read_csv("watched_rating_2.csv", sep=",")
+    path_to_file = os.path.join(self_dir, "../Datasets/watched_rating_2.csv")
+
+    movies = pd.read_csv(path_to_file, sep=",")
+    # movies = pd.read_csv("watched_rating_2.csv", sep=",")
     columns = list(movies.columns)
     for name in columns:
         has_NA = movies[name].isnull().sum()
