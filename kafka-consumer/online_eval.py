@@ -50,8 +50,9 @@ class recommendation:
         self.watch_movie = []
 
 
-#  find index of a recommendtion request with userID
-def findRecommendationIdFromUserId(userId, recommendation_list: list[recommendation]):
+# find index of a recommendtion request with userID
+# recommendation_list: list[recommendation]
+def findRecommendationIdFromUserId(userId, recommendation_list):
     output_list = []
     for rec in recommendation_list:
         # check if the time spam has passed
@@ -68,7 +69,8 @@ def fileNameByIndex(index: int):
 
 
 # end the evaluation process if all rec has done collecting info.
-def shouldEndEval(recommendations_list: list[recommendation], data_files, time_span):
+# recommendation_list: list[recommendation]
+def shouldEndEval(recommendations_list, data_files, time_span):
 
     nonFinished = 0
 
@@ -112,8 +114,9 @@ def shouldEndEval(recommendations_list: list[recommendation], data_files, time_s
 # TODO whehther we need to set up a db
 
 # input:
-# num of recommendation requests to evaluate
-# time spam for each recommendation to be evaluated within, in seconds e.g. 3600 for reading 1 hour
+# num of recommendation requests to evaluate: int
+# time spam for each recommendation to be evaluated within, in seconds e.g. 3600 for reading 1 hour: int
+# consumer: production kafka consumer or mock list logs
 
 
 def get_recommendation_request_feedback(num_recommendation, time_span, consumer):
@@ -203,9 +206,8 @@ def get_recommendation_request_feedback(num_recommendation, time_span, consumer)
 # give a recommendation list
 # calcuate MRR for each recommendation
 # MRR info: https://en.wikipedia.org/wiki/Mean_reciprocal_rank
-
-
-def calculate_MRR(recommendations_list: list[recommendation]):
+# recommendation_list: list[recommendation]
+def calculate_MRR(recommendations_list):
     accpet_rates = []
     for rec in recommendations_list:
 
