@@ -51,9 +51,9 @@ class recommendation:
 
 
 #  find index of a recommendtion request with userID
-def findRecommendationIdFromUserId(userId, rec_list: list[recommendation]):
+def findRecommendationIdFromUserId(userId, recommendation_list: list[recommendation]):
     output_list = []
-    for rec in rec_list:
+    for rec in recommendation_list:
         # check if the time spam has passed
         if (userId == rec.user) and (rec.time_spam_finished is False):
             output_list.append(rec)
@@ -68,11 +68,11 @@ def fileNameByIndex(index: int):
 
 
 # end the evaluation process if all rec has done collecting info.
-def shouldEndEval(rec_list: list[recommendation], data_files, time_span):
+def shouldEndEval(recommendations_list: list[recommendation], data_files, time_span):
 
     nonFinished = 0
 
-    for rec in rec_list:
+    for rec in recommendations_list:
         current_time = time.time()
         # this time spam is done
         if (rec.time_spam_finished) is False and (
@@ -205,9 +205,9 @@ def get_recommendation_request_feedback(num_recommendation, time_span, consumer)
 # MRR info: https://en.wikipedia.org/wiki/Mean_reciprocal_rank
 
 
-def calculate_MRR(rec_list: list[recommendation]):
+def calculate_MRR(recommendations_list: list[recommendation]):
     accpet_rates = []
-    for rec in rec_list:
+    for rec in recommendations_list:
 
         rec.movies
         unique_rec_movie = []
