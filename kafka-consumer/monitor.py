@@ -66,7 +66,9 @@ def process_message(message):
 
                 # remove the recommendation from the list of stored recommendations
                 new_recommendations = recommended_movies
-                new_recommendations[movie_index] = " " # replace the movieId with a space
+                new_recommendations[
+                    movie_index
+                ] = " "  # replace the movieId with a space
                 value["movies"] = ",".join(new_recommendations)
                 db.set(db_key, json.dumps(value))
 
