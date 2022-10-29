@@ -14,6 +14,8 @@ class RedisDB:
             )
             if self.r.ping():
                 print("Connected to Redis")
+            else:
+                raise Exception("Could not connect to Redis")
         except Exception as e:
             self.r = None
             self.r_local = {}

@@ -72,6 +72,19 @@ services:
     volumes:
       - redis-data:/data
 
+  kafka-consumer:
+    build:
+      context: .
+      dockerfile: ./kafka-consumer/Dockerfile
+    container_name: kafka-consumer
+    restart: unless-stopped
+    environment:
+      REDIS_HOST: 172.16.238.14
+      REDIS_PORT: 6379
+    networks:
+      team3-network:
+        ipv4_address: 172.16.238.15
+
 volumes:
   redis-data:
     driver: local

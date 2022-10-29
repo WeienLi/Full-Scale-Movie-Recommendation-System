@@ -1,0 +1,12 @@
+FROM python:alpine
+
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+RUN pip install --upgrade pip \
+    && pip install pykafka \
+    && pip install redis
+
+WORKDIR /Team-3
+COPY . .
+ENTRYPOINT ["python", "-m", "kafka-consumer.monitor.py"]

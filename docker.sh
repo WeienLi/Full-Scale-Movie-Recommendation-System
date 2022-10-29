@@ -3,7 +3,7 @@
 
 cmd=$1
 flask_api_tag="flask_api"
-project_images=( $flask_api_tag "prometheus" "grafana" "alertmanager" "redis" )
+project_images=( $flask_api_tag "prometheus" "grafana" "alertmanager" "redis" "kafka-consumer" )
 
 # Stop all existing Docker containers
 function stop() {

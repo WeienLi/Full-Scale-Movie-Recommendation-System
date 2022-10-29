@@ -7,12 +7,18 @@ from .utils.common import get_consumer
 from .utils.constants import MessageType
 from .utils.message_parser import parse_message
 
-db = RedisDB()
+# wait for 5 seconds to make sure all services are ready
+time.sleep(5)
 
+db = RedisDB()
 consumer = get_consumer()
-for message in consumer:
+
+print("Listening for Kafka messages...")
+
+
+def process_message(message):
     if message is None:
-        continue
+        return
     try:
         text = message.value.decode("utf-8")
     except Exception:
@@ -20,7 +26,7 @@ for message in consumer:
 
     parsed_message = parse_message(text)
     if parsed_message is None:
-        continue
+        return
 
     if parsed_message[0] == MessageType.RECOMMEND:
         userId = "".join(parsed_message[1])
@@ -33,7 +39,7 @@ for message in consumer:
         )
         db_key = "rec:" + userId
         db.set(db_key, value)
-        continue
+        return
 
     if parsed_message[0] == MessageType.WATCHTIME:
         userId = parsed_message[2]
@@ -62,3 +68,10 @@ for message in consumer:
                 db.set(db_key, json.dumps(value))
 
                 print("logged watched")
+
+
+for message in consumer:
+    try:
+        process_message(message)
+    except Exception as e:
+        print("[ERROR]", e)
