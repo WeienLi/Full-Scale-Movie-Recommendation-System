@@ -65,7 +65,8 @@ def process_message(message):
                 db.execute_command("TS.ADD", "rec:watched:rank", "*", rank)
 
                 # remove the recommendation from the list of stored recommendations
-                new_recommendations = [x for x in recommended_movies if x != movieId]
+                new_recommendations = recommended_movies
+                new_recommendations[movie_index] = " " # replace the movieId with a space
                 value["movies"] = ",".join(new_recommendations)
                 db.set(db_key, json.dumps(value))
 
