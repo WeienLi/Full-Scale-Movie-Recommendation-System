@@ -68,7 +68,7 @@ def process_message(message):
                 new_recommendations = recommended_movies
                 new_recommendations[
                     movie_index
-                ] = " "  # replace the movieId with a space
+                ] = "#"  # replace the movieId with a # symbol
                 value["movies"] = ",".join(new_recommendations)
                 db.set(db_key, json.dumps(value))
 
