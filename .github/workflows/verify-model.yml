@@ -1,0 +1,99 @@
+name: Verify inference model
+
+on:
+  pull_request:
+    branches:
+      - "*"
+
+env:
+  WANDB_API_KEY: eac6962dc0fb1c35f8d46265ac268212c56a17f0
+  WANDB_PROJECT: ci-model-evaluation
+
+jobs:
+  check-if-model-changed:
+    runs-on: ubuntu-latest
+    outputs:
+      model_changed: ${{ steps.check.outputs.model_changed }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2.3.4
+
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            "model_code":
+              - 'Model Code and Tuning/**'
+
+      - if: steps.changes.outputs.model_code == 'true'
+        id: check
+        run: echo "model_changed=true" >> $GITHUB_OUTPUT
+
+  verify-model:
+    needs: check-if-model-changed
+    runs-on: ubuntu-latest
+    if: ${{ needs.check-if-model-changed.outputs.model_changed == 'true' }}
+    steps:
+      - name: Create comment
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            #### Model changed 🐌
+            Verifying inference model using SHA `${{ github.sha }}`. This may take a few minutes.
+
+      - name: Checkout repo
+        uses: actions/checkout@v2.3.4
+
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f dev-requirements.txt ]; then pip install -r dev-requirements.txt; fi
+
+      - name: Train model
+        run: python "Model Code and Tuning"/modularize_tensorflow/Continous_Intergration_main.py
+        env:
+          GITHUB_SHA: ${{ github.sha }}
+
+      - name: Get Runs Using SHA
+        uses: machine-learning-apps/wandb-action@master
+        with:
+          PROJECT_NAME: ${{ format('team-3-comp585/{0}', env.WANDB_PROJECT) }}
+          FILTER_GITHUB_SHA: ${{ github.sha }}
+          BASELINE_TAGS: "['baseline', 'reference']"
+          DISPLAY_METRICS: "[
+            'factorized_top_k/top_20_categorical_accuracy',
+            'factorized_top_k/top_500_categorical_accuracy',
+            'factorized_top_k/top_5_categorical_accuracy',
+            'loss', 'total_loss', 'regularization_loss', '_runtime'
+            ]"
+          WANDB_API_KEY: ${{ env.WANDB_API_KEY }}
+          DEBUG: "true"
+
+      - name: Read output CSV
+        id: csv
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./wandb_report.csv
+
+      - name: Create MD
+        uses: petems/csv-to-md-table-action@master
+        id: csv-table-output
+        with:
+          csvinput: ${{ steps.csv.outputs.content }}
+
+      - name: Post comment with evaluation results
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body: |
+            #### Model verified ✅
+            SHA: `${{ github.sha }}`
+            ${{ steps.csv-table-output.outputs.markdown-table }}

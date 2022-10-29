@@ -1,4 +1,5 @@
 import logging
+import os
 
 import numpy as np
 import tensorflow as tf
@@ -438,16 +439,22 @@ def train_retrieval(wnb, cached_train, cached_test, layer_size=32, lr=0.2, epoch
 
     if wnb:
         # wandb.login()
-        wandb.init(project="my-test--retrieval-project")
+        github_sha = os.getenv("GITHUB_SHA")
+        project_name = os.getenv("WANDB_PROJECT", "retrieval-project")
+        wandb.init(project=project_name)
+        if github_sha is not None:
+            wandb.config.github_sha = github_sha
+
         wandb_callback = wandb.keras.WandbCallback()
         model_wb = RecRetModel([layer_size])
         model_wb.compile(optimizer=tf.keras.optimizers.Adagrad(learning_rate=lr))
         model_wb.fit(cached_train, epochs=epoch, callbacks=[wandb_callback])
+        return model_wb
     else:
         model_1 = RecRetModel([layer_size])
         model_1.compile(optimizer=tf.keras.optimizers.Adagrad(learning_rate=lr))
         model_1.fit(cached_train, epochs=epoch, validation_data=cached_test, verbose=1)
-    return model_1
+        return model_1
 
 
 def creating_index(k, model_1):
