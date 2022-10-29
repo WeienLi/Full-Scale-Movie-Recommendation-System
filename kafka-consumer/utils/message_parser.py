@@ -1,4 +1,4 @@
-from utils.constants import MessageType
+from .constants import MessageType
 
 
 def parse_message(message):
