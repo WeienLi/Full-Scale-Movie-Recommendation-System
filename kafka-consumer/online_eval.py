@@ -1,11 +1,8 @@
 import time
 from xmlrpc.client import boolean
 
-from pykafka import KafkaClient
-from pykafka.common import OffsetType
 from utils.constants import MessageType
 from utils.message_parser import parse_message
-
 
 # --------------------------------------------
 #       Helper methods
@@ -16,6 +13,8 @@ from utils.message_parser import parse_message
 # movie_list = list of recommended movie
 # create_time = when the checking starts
 # time_spam = whehter checking is done
+
+
 class recommendation:
     def __init__(
         self,

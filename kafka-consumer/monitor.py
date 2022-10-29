@@ -22,7 +22,6 @@ for message in consumer:
     if parsed_message is None:
         continue
 
-    db_key = "rec:" + userId
     if parsed_message[0] == MessageType.RECOMMEND:
         userId = "".join(parsed_message[1])
         movie_list = ",".join(parsed_message[2:])
@@ -32,11 +31,13 @@ for message in consumer:
                 "created_time": time.time(),
             }
         )
+        db_key = "rec:" + userId
         db.set(db_key, value)
         continue
 
     if parsed_message[0] == MessageType.WATCHTIME:
         userId = parsed_message[2]
+        db_key = "rec:" + userId
         value = db.get(db_key)
         if value is not None:
             value = json.loads(value)

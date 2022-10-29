@@ -42,7 +42,6 @@ services:
       - ./Monitoring/dashboards:/var/lib/grafana/dashboards
     environment:
       GF_SECURITY_ADMIN_PASSWORD: pass@123
-      GF_USERS_ALLOW_SIGN_UP: false
       GF_INSTALL_PLUGINS: redis-app
     networks:
       team3-network:
