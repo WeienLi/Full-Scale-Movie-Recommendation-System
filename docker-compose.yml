@@ -81,8 +81,11 @@ services:
     environment:
       REDIS_HOST: 172.16.238.14
       REDIS_PORT: 6379
+    ports:
+      - 8000:8000
     networks:
-      - team3-network
+      team3-network:
+        ipv4_address: 172.16.238.15
 
   redis-exporter:
     image: oliver006/redis_exporter
@@ -96,7 +99,7 @@ services:
       - prometheus
     networks:
       team3-network:
-        ipv4_address: 172.16.238.15
+        ipv4_address: 172.16.238.16
 
 volumes:
   redis-data:

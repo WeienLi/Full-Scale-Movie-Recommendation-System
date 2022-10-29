@@ -3,9 +3,11 @@ import time
 
 from Database.db import RedisDB
 
-from .utils.common import get_consumer
+from .utils.common import get_consumer, start_prometheus
 from .utils.constants import MessageType
 from .utils.message_parser import parse_message
+
+start_prometheus()
 
 # wait for 5 seconds to make sure all services are ready
 time.sleep(5)

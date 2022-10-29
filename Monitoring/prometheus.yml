@@ -17,9 +17,13 @@ scrape_configs:
     static_configs:
       - targets: ["172.16.238.10:8082"]
 
+  - job_name: kafka-consumer
+    static_configs:
+      - targets: ["172.16.238.15:8000"]
+
   - job_name: redis-exporter
     static_configs:
-      - targets: ["172.16.238.15:9121"]
+      - targets: ["172.16.238.16:9121"]
 
 alerting:
   alertmanagers:
