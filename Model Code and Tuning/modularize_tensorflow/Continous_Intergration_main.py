@@ -54,7 +54,7 @@ def Countinous_Learning():
         unique_occupations,
     )
     # print("Hello")
-    retrieval_model.train_retrieval(True, cached_train, cached_test, 16, 0.006, 2)
+    retrieval_model.train_retrieval(True, cached_train, cached_test, 16, 0.006, 3)
 
 
 st = time.time()
