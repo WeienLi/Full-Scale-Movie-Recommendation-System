@@ -33,4 +33,6 @@ jobs:
           HOST: ${{ env.HOST_NAME }}
           USERNAME: ${{ env.USER_NAME }}
         with:
-          script: ./docker.sh start
+          script: |
+            cd ${{ env.FOLDER_NAME }}
+            ./docker.sh start
