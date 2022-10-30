@@ -24,7 +24,6 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
-  "id": 6,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -52,7 +51,7 @@
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "linear",
+            "lineInterpolation": "smooth",
             "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
@@ -106,7 +105,8 @@
       },
       "targets": [
         {
-          "aggregation": "",
+          "aggregation": "max",
+          "bucket": 60000,
           "command": "ts.range",
           "datasource": {
             "type": "redis-datasource",
@@ -116,14 +116,15 @@
           "legend": "recommend",
           "query": "",
           "refId": "A",
-          "streaming": true,
+          "streaming": false,
           "streamingDataType": "DataFrame",
           "streamingInterval": 1000,
           "type": "timeSeries",
           "value": "from cache"
         },
         {
-          "aggregation": "",
+          "aggregation": "max",
+          "bucket": 60000,
           "command": "ts.range",
           "datasource": {
             "type": "redis-datasource",
@@ -134,7 +135,7 @@
           "legend": "recommend",
           "query": "",
           "refId": "B",
-          "streaming": true,
+          "streaming": false,
           "streamingDataType": "DataFrame",
           "streamingInterval": 1000,
           "type": "timeSeries",
@@ -145,7 +146,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "10s",
+  "refresh": "30s",
   "schemaVersion": 37,
   "style": "dark",
   "tags": [],
@@ -160,6 +161,6 @@
   "timezone": "",
   "title": "Cache monitor",
   "uid": "zBLqnaN4z",
-  "version": 1,
+  "version": 4,
   "weekStart": ""
 }
