@@ -22,6 +22,7 @@ jobs:
           KEY: ${{ secrets.SSH_KEY }}
           HOST: ${{ env.HOST_NAME }}
           USERNAME: ${{ env.USER_NAME }}
+          RM: true
         with:
           source: "*"
           target: ${{ env.FOLDER_NAME }}

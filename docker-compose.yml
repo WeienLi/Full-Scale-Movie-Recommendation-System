@@ -6,7 +6,8 @@ services:
     container_name: flask_api
     restart: unless-stopped
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     environment:
       REDIS_HOST: 172.16.238.14
       REDIS_PORT: 6379
@@ -68,6 +69,11 @@ services:
     image: redislabs/redistimeseries:edge
     container_name: redis
     restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 10
     ports:
       - 6379:6379
     networks:
@@ -83,7 +89,8 @@ services:
     container_name: kafka-consumer
     restart: unless-stopped
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     environment:
       REDIS_HOST: 172.16.238.14
       REDIS_PORT: 6379
@@ -97,7 +104,8 @@ services:
     image: oliver006/redis_exporter
     container_name: redis-exporter
     depends_on:
-      - redis
+      redis:
+        condition: service_healthy
     ports:
       - 9121:9121
     environment:
