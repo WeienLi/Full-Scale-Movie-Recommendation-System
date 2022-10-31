@@ -61,6 +61,7 @@ jobs:
         run: python "Model Code and Tuning"/modularize_tensorflow/Continous_Intergration_main.py
         env:
           GITHUB_SHA: ${{ github.sha }}
+          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
 
       - name: Get Runs Using SHA
         uses: machine-learning-apps/wandb-action@master
