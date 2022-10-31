@@ -6,20 +6,36 @@ import redis
 class RedisDB:
     def __init__(self):
         try:
-            REDIS_HOST = os.getenv("REDIS_HOST")
-            REDIS_PORT = os.getenv("REDIS_PORT")
-            self.r = redis.Redis(
-                host=REDIS_HOST,
-                port=REDIS_PORT,
-            )
-            if self.r.ping():
-                print("Connected to Redis")
-            else:
-                raise Exception("Could not connect to Redis")
+            self.connect()
         except Exception as e:
             self.r = None
             self.r_local = {}
             print(str(e) + ".\nUsing dynamic dictionary instead.")
+
+    def connect(self):
+        """Connect to Redis"""
+        self.connected_to_redis = False
+        REDIS_HOST = os.getenv("REDIS_HOST")
+        REDIS_PORT = os.getenv("REDIS_PORT")
+        self.r = redis.Redis(
+            host=REDIS_HOST,
+            port=REDIS_PORT,
+        )
+        if self.r.ping():
+            print("Connected to Redis")
+            self.connected_to_redis = True
+            self.save_local_files_to_redis()
+        else:
+            raise Exception("Could not connect to Redis")
+
+    def save_local_files_to_redis(self):
+        """Save the local (temporary) dictionary to Redis"""
+        try:
+            for key, value in self.r_local.items():
+                self.r.set(key, value)
+            self.r_local = {}
+        except Exception as e:
+            print("Could not save local files to Redis: " + str(e))
 
     def get(self, key):
         """Get the (string) value of a key"""

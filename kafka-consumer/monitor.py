@@ -9,9 +9,6 @@ from .utils.message_parser import parse_message
 
 start_prometheus()
 
-# wait for 5 seconds to make sure all services are ready
-time.sleep(5)
-
 db = RedisDB()
 consumer = get_consumer()
 
@@ -78,5 +75,7 @@ def process_message(message):
 for message in consumer:
     try:
         process_message(message)
+        if not db.connected_to_redis:
+            db.connect()
     except Exception as e:
         print("[ERROR]", e)
