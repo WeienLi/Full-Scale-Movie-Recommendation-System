@@ -3,7 +3,7 @@
 
 cmd=$1
 flask_api_tag="flask_api"
-project_images=( $flask_api_tag "prometheus" "grafana" "alertmanager" "redis" "kafka-consumer" "redis-exporter" )
+project_images=( $flask_api_tag "prometheus" "grafana" "alertmanager" "redis" "kafka-consumer" "redis-exporter" "traefik" )
 
 # Stop all existing Docker containers
 function stop() {
@@ -18,20 +18,8 @@ function stop() {
 
 # Create and start all Docker images and containers
 function start() {
-    flask_api_container=$(docker ps -a | grep $flask_api_tag | awk '{print $1}')
-    # remove flask_api container if it exists
-    if [ -n "$flask_api_container" ]; then
-        docker stop $flask_api_container
-        docker rm $flask_api_container
-    fi
-    flask_api_image=$(docker images | grep $flask_api_tag | awk '{print $3}')
-    # remove flask_api image if it exists
-    if [ -n "$flask_api_image" ]; then
-        docker rmi $flask_api_image
-    fi
-    stop
-
-    echo "Starting new containers..."
+    export GITHUB_SHA=$(git rev-parse --short HEAD)
+    echo "Starting containers..."
     docker-compose up -d --build
 }
 
