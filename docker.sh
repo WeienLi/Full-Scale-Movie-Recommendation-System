@@ -3,7 +3,7 @@
 
 cmd=$1
 flask_api_tag="flask_api"
-project_images=( $flask_api_tag "prometheus" "grafana" "alertmanager" "redis" "kafka-consumer" "redis-exporter" "traefik" )
+project_images=( $flask_api_tag "prometheus" "grafana" "alertmanager" "redis" "kafka-consumer" "redis-exporter" "traefik" "fallback-service" )
 
 # Stop all existing Docker containers
 function stop() {
@@ -21,6 +21,23 @@ function start() {
     export GITHUB_SHA=$(git rev-parse --short HEAD)
     echo "Starting containers..."
     docker-compose up -d --build
+    docker image prune -f
+}
+
+# start canary container for API
+function startCanary() {
+    # ensure the rest of the services are running
+    for image in "${project_images[@]}"; do
+        container=$(docker ps -a | grep $image | awk '{print $1}')
+        if [ -z "$container" ]; then
+            echo "Starting core services for the project..."
+            start
+            break
+        fi
+    done
+    export GITHUB_SHA=$(git rev-parse --short HEAD)
+    echo "Starting canary API..."
+    docker-compose up -d --build flask_api_canary
 }
 
 # remove all Docker containers, images, and volumes associated with the project
@@ -48,6 +65,8 @@ function reset() {
 
 if [ "$cmd" == "start" ]; then
     start
+elif [ "$cmd" == "start-canary" ]; then
+    startCanary
 elif [ "$cmd" == "stop" ]; then
     stop
 elif [ "$cmd" == "reset" ]; then
