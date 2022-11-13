@@ -19,7 +19,10 @@ function stop() {
 
 # Create and start all Docker images and containers
 function start() {
-    export GITHUB_SHA=$(git rev-parse --short HEAD)
+    # check if GITHUB_SHA variable exists
+    if [ -z "$GITHUB_SHA" ]; then
+        export GITHUB_SHA=$(git rev-parse HEAD)
+    fi
     echo "Starting containers..."
     docker-compose up -d --build
     docker image prune -f
@@ -29,7 +32,7 @@ function start() {
 function startCanary() {
     # ensure the rest of the services are running
     for image in "${project_images[@]}"; do
-        if [ "$image" != "$flask_api_tag" ]; then
+        if [ "$image" != "$flask_api_canary_tag" ]; then
             container=$(docker ps -a | grep $image | awk '{print $1}')
             if [ -z "$container" ]; then
                 echo "Please start the project first using the 'start' command"
@@ -37,7 +40,9 @@ function startCanary() {
             fi
         fi
     done
-    export GITHUB_SHA=$(git rev-parse --short HEAD)
+    if [ -z "$GITHUB_SHA" ]; then
+        export GITHUB_SHA=$(git rev-parse HEAD)
+    fi
     echo "Starting canary API..."
     docker-compose up -d --build $flask_api_canary_tag
 }

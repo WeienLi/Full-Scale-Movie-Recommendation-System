@@ -1,9 +1,14 @@
+import os
+import time
+
 import requests
 from flask import Flask, abort
 from prometheus_flask_exporter import PrometheusMetrics
 
 from Database.db import RedisDB
 from Models.model_inference import recommendMovies
+
+from .constants import APP_MODES, SavedRec
 
 app = Flask(__name__)
 db = RedisDB()
@@ -15,6 +20,7 @@ DEFAULT_USER = {
     "occupation": "other",
     "gender": "M",
 }
+APP_MODE = os.environ.get("APP_MODE", APP_MODES.MAIN)
 
 
 def metrics_rule(req):
@@ -37,12 +43,17 @@ def getRecommendations(userID):
     """Get a list of recommended movies for a given user ID"""
     """Inputs: userID (string)"""
     # check if recommendations are already in cache
-    recommendations = db.get(userID)
-    if recommendations is not None:
-        db.execute_command("TS.INCRBY", "cache:hit", 1)
-        return recommendations
+    db_key_prefix = ""
+    if APP_MODE == APP_MODES.CANARY:
+        db_key_prefix = "canary:"
+
+    data = db.get(db_key_prefix + userID)
+    if data is not None:
+        db.execute_command("TS.INCRBY", db_key_prefix + "cache:hit", 1)
+        parsed_data = SavedRec(data)
+        return parsed_data.recommendations
     else:
-        db.execute_command("TS.INCRBY", "cache:miss", 1)
+        db.execute_command("TS.INCRBY", db_key_prefix + "cache:miss", 1)
 
     # get user information from API
     user = DEFAULT_USER
@@ -71,6 +82,17 @@ def getRecommendations(userID):
     result = ",".join(movies)
 
     # cache recommendations
-    db.set(userID, result)
+    saved_rec = SavedRec()
+    # get current python timestamp
+    sha = os.environ.get("GITHUB_SHA", "unknown")
+    saved_rec.init(userID, result, time.time(), sha, APP_MODE)
+    db.set(db_key_prefix + userID, str(saved_rec))
 
     return result
+
+
+@app.after_request
+def show_app_mode(response):
+    response.headers["App-Mode"] = APP_MODE
+    response.headers["Github-SHA"] = os.environ.get("GITHUB_SHA", "unknown")
+    return response
