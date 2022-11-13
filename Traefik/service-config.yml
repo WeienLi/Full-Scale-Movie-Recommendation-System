@@ -23,7 +23,7 @@ http:
       loadBalancer:
         healthCheck:
           path: /
-          interval: 100ms
+          interval: 2s
           timeout: 1s
         servers:
           - url: "http://flask_api:8082/"
@@ -32,7 +32,7 @@ http:
       loadBalancer:
         healthCheck:
           path: /
-          interval: 100ms
+          interval: 2s
           timeout: 1s
         servers:
           - url: "http://flask_api_canary:8082/"
@@ -40,4 +40,4 @@ http:
     fallback-service:
       loadBalancer:
         servers:
-          - url: "http://fallback-service/"
+          - url: "http://fallback-service:8082/"
