@@ -41,7 +41,7 @@ jobs:
             export GITHUB_SHA=${{ env.APP_SHA }}
             ./docker.sh start-canary
 
-  release:
+  approvals:
     runs-on: ubuntu-latest
     needs: deploy-canary
     steps:
@@ -52,6 +52,13 @@ jobs:
           approvers: Shanzid01,WeienLi,ChenKua,msoutojr,Pr0m1s3zZ
           minimum-approvals: 1
           issue-title: "Release ${{ env.APP_SHA }}"
+
+  release:
+    runs-on: ubuntu-latest
+    needs: approvals
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2.3.4
 
       - name: Copy files to McGill server
         uses: appleboy/scp-action@master
@@ -76,8 +83,12 @@ jobs:
             export GITHUB_SHA=${{ env.APP_SHA }}
             ./docker.sh release
 
+  cleanup:
+    runs-on: ubuntu-latest
+    needs: release
+    if: ${{ always() }}
+    steps:
       - name: Remove canary
-        if: ${{ always() }}
         uses: appleboy/ssh-action@master
         env:
           KEY: ${{ secrets.SSH_KEY }}
