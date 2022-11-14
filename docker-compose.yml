@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  flask_api:
+  flask_api: &api_template
     build: .
     image: flask_api:${GITHUB_SHA}
     restart: unless-stopped
@@ -25,13 +25,12 @@ services:
       - team3-network
 
   flask_api_canary:
-    extends:
-      service: flask_api
+    <<: *api_template # Copy the contents of the flask_api service
     environment:
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      GITHUB_SHA: ${GITHUB_SHA}
       APP_MODE: canary
-    depends_on:
-      redis:
-        condition: service_healthy
     profiles:
       - canary
   
@@ -40,8 +39,8 @@ services:
     container_name: fallback-service
     restart: unless-stopped
     volumes:
-      - ./traefik/fallback-recommendation.html:/usr/share/nginx/html/index.html
-      - ./traefik/nginx.conf:/etc/nginx/nginx.conf
+      - ./Traefik/fallback-recommendation.html:/usr/share/nginx/html/index.html
+      - ./Traefik/nginx.conf:/etc/nginx/nginx.conf
     ports:
       - 8082
     networks:

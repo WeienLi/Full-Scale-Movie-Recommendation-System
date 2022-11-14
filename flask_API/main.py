@@ -44,7 +44,7 @@ def getRecommendations(userID):
     """Inputs: userID (string)"""
     # check if recommendations are already in cache
     db_key_prefix = ""
-    if APP_MODE == APP_MODES.CANARY:
+    if APP_MODE == str(APP_MODES.CANARY.value):
         db_key_prefix = "canary:"
 
     data = db.get(db_key_prefix + userID)
