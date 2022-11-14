@@ -1,0 +1,43 @@
+http:
+  routers:
+    app_router:
+      service: app
+      rule: "PathPrefix(`/`)"
+
+  services:
+    app:
+      failover:
+        service: app_weighted
+        fallback: fallback-service
+
+    app_weighted:
+      weighted:
+        healthCheck: {}
+        services:
+          - name: flask_api_main
+            weight: 8
+          - name: flask_api_canary
+            weight: 2
+
+    flask_api_main:
+      loadBalancer:
+        healthCheck:
+          path: /
+          interval: 2s
+          timeout: 1s
+        servers:
+          - url: "http://flask_api:8082/"
+
+    flask_api_canary:
+      loadBalancer:
+        healthCheck:
+          path: /
+          interval: 2s
+          timeout: 1s
+        servers:
+          - url: "http://flask_api_canary:8082/"
+
+    fallback-service:
+      loadBalancer:
+        servers:
+          - url: "http://fallback-service:8082/"

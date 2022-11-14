@@ -10,7 +10,7 @@ datasources:
     type: prometheus
     access: proxy
     orgId: 1
-    url: http://172.16.238.11:9090
+    url: http://prometheus:9090
     # <string> database password, if used
     password:
     # <string> database user, if used
@@ -46,7 +46,7 @@ datasources:
     access: proxy
     orgId: 1
     version: 1
-    url: redis://172.16.238.14:6379
+    url: redis://redis:6379
     jsonData:
       client: standalone
       poolSize: 5

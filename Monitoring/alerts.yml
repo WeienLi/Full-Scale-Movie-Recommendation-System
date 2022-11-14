@@ -2,8 +2,8 @@ groups:
   - name: AllInstances
     rules:
       - alert: InstanceDown
-        # Condition for alerting
-        expr: up == 0
+        # Condition for alerting (skip alerting for canary app)
+        expr: up{job!~"flask-api-canary"} == 0
         for: 30s
         # Annotation - additional informational labels to store more information
         annotations:

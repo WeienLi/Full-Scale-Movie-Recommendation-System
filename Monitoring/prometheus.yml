@@ -1,7 +1,7 @@
 # my global config
 global:
   scrape_interval: 30s # Set the scrape interval to every 30 seconds. Default is every 1 minute.
-  evaluation_interval: 30s # Evaluate rules every 30 seconds. The default is every 1 minute.
+  evaluation_interval: 5s # Evaluate rules every 30 seconds. The default is every 1 minute.
   # scrape_timeout is set to the global default (10s).
 
 rule_files:
@@ -10,23 +10,33 @@ rule_files:
 scrape_configs:
   - job_name: "prometheus"
     static_configs:
-      - targets: ["localhost:9090"]
+      - targets: ["prometheus:9090"]
 
   - job_name: "flask-api"
     scrape_interval: 10s
     static_configs:
-      - targets: ["172.16.238.10:8082"]
+      - targets: ["flask_api:8082"]
+
+  - job_name: "flask-api-canary"
+    scrape_interval: 10s
+    static_configs:
+      - targets: ["flask_api_canary:8082"]
+
+  - job_name: "traefik"
+    scrape_interval: 10s
+    static_configs:
+      - targets: ["traefik:8080"]
 
   - job_name: kafka-consumer
     static_configs:
-      - targets: ["172.16.238.15:8000"]
+      - targets: ["kafka-consumer:8000"]
 
   - job_name: redis-exporter
     static_configs:
-      - targets: ["172.16.238.16:9121"]
+      - targets: ["redis-exporter:9121"]
 
 alerting:
   alertmanagers:
     - scheme: http
       static_configs:
-        - targets: ["172.16.238.13:9093"]
+        - targets: ["alertmanager:9093"]

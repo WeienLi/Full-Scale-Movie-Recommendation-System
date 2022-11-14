@@ -3,19 +3,49 @@ version: "3.9"
 services:
   flask_api:
     build: .
-    container_name: flask_api
+    image: flask_api:${GITHUB_SHA}
     restart: unless-stopped
     depends_on:
       redis:
         condition: service_healthy
     environment:
-      REDIS_HOST: 172.16.238.14
+      REDIS_HOST: redis
       REDIS_PORT: 6379
+      GITHUB_SHA: ${GITHUB_SHA}
+      APP_MODE: main
+    healthcheck:
+      test: wget --spider --tries=1 --no-verbose http://localhost:8082/ || bash -c 'kill -s 15 -1 && (sleep 10; kill -s 9 -1)'
+      interval: 30s
+      timeout: 1s
+      retries: 1
+    restart: unless-stopped
     ports:
-      - 8082:8082
+      - 8082
     networks:
-      team3-network:
-        ipv4_address: 172.16.238.10
+      - team3-network
+
+  flask_api_canary:
+    extends:
+      service: flask_api
+    environment:
+      APP_MODE: canary
+    depends_on:
+      redis:
+        condition: service_healthy
+    profiles:
+      - canary
+  
+  fallback-service:
+    image: nginx:alpine
+    container_name: fallback-service
+    restart: unless-stopped
+    volumes:
+      - ./traefik/fallback-recommendation.html:/usr/share/nginx/html/index.html
+      - ./traefik/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - 8082
+    networks:
+      - team3-network
 
   prometheus:
     image: prom/prometheus:latest
@@ -28,8 +58,7 @@ services:
       - ./Monitoring/alerts.yml:/etc/prometheus/alerts.yml
     command: --web.enable-lifecycle  --config.file=/etc/prometheus/prometheus.yml
     networks:
-      team3-network:
-        ipv4_address: 172.16.238.11
+      - team3-network
 
   grafana:
     image: grafana/grafana:latest
@@ -47,8 +76,7 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: pass@123
       GF_INSTALL_PLUGINS: redis-app
     networks:
-      team3-network:
-        ipv4_address: 172.16.238.12
+      - team3-network
 
   alertmanager:
     image: prom/alertmanager:latest
@@ -62,10 +90,10 @@ services:
       - "./Monitoring/alertmanager.yml:/config/alertmanager.yml"
     command: --config.file=/config/alertmanager.yml --log.level=debug
     networks:
-      team3-network:
-        ipv4_address: 172.16.238.13
+      - team3-network
 
   redis:
+    # image: redisfab/redistimeseries:1.6.9-arm64v8-focal # for arm64 (Apple M1)
     image: redislabs/redistimeseries:edge
     container_name: redis
     restart: always
@@ -77,8 +105,7 @@ services:
     ports:
       - 6379:6379
     networks:
-      team3-network:
-        ipv4_address: 172.16.238.14
+      - team3-network
     volumes:
       - redis-data:/data
 
@@ -92,13 +119,12 @@ services:
       redis:
         condition: service_healthy
     environment:
-      REDIS_HOST: 172.16.238.14
+      REDIS_HOST: redis
       REDIS_PORT: 6379
     ports:
       - 8000:8000
     networks:
-      team3-network:
-        ipv4_address: 172.16.238.15
+      - team3-network
 
   redis-exporter:
     image: oliver006/redis_exporter
@@ -109,13 +135,28 @@ services:
     ports:
       - 9121:9121
     environment:
-      REDIS_ADDR: "172.16.238.14:6379"
+      REDIS_ADDR: "redis:6379"
     links:
       - redis
       - prometheus
     networks:
-      team3-network:
-        ipv4_address: 172.16.238.16
+      - team3-network
+
+  traefik:
+    image: traefik:v2.9
+    command:
+      --api.insecure=true
+      --entryPoints.api_entry.address=:8082
+      --providers.file.directory=/etc/traefik/
+      --metrics.prometheus=true 
+    container_name: traefik
+    ports:
+      - "8080:8080"
+      - "8082:8082"
+    volumes:
+      - ./Traefik/service-config.yml:/etc/traefik/dynamic.yml
+    networks:
+      - team3-network
 
 volumes:
   redis-data:

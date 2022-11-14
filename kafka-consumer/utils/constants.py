@@ -8,3 +8,8 @@ class MessageType(Enum):
     WATCHTIME = "watchtime"
     RATING = "rating"
     BROKEN = "broken"
+
+
+class APP_MODE:
+    CANARY = "canary"
+    MAIN = "main"

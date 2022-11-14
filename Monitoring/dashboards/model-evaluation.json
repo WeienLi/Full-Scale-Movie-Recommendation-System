@@ -98,7 +98,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -116,9 +116,27 @@
           },
           "fill": false,
           "keyName": "rec:watched:rank",
+          "legend": "",
           "query": "",
-          "refId": "A",
-          "type": "timeSeries"
+          "refId": "Main",
+          "type": "timeSeries",
+          "value": "Main"
+        },
+        {
+          "aggregation": "avg",
+          "bucket": 600000,
+          "command": "ts.range",
+          "datasource": {
+            "type": "redis-datasource",
+            "uid": "PA7F6415749A3297A"
+          },
+          "hide": false,
+          "keyName": "canary:rec:watched:rank",
+          "legend": "",
+          "query": "",
+          "refId": "Canary",
+          "type": "timeSeries",
+          "value": "Canary"
         }
       ],
       "title": "Mean Reciprocal Rank (MRR)",
@@ -183,7 +201,7 @@
       },
       "gridPos": {
         "h": 9,
-        "w": 12,
+        "w": 8,
         "x": 0,
         "y": 10
       },
@@ -193,7 +211,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -212,9 +230,25 @@
           "keyName": "rec:watched:counter",
           "legend": "",
           "query": "",
-          "refId": "A",
+          "refId": "Main",
           "type": "timeSeries",
-          "value": ""
+          "value": "Main"
+        },
+        {
+          "aggregation": "max",
+          "bucket": 600000,
+          "command": "ts.range",
+          "datasource": {
+            "type": "redis-datasource",
+            "uid": "PA7F6415749A3297A"
+          },
+          "hide": false,
+          "keyName": "canary:rec:watched:counter",
+          "legend": "",
+          "query": "",
+          "refId": "Canary",
+          "type": "timeSeries",
+          "value": "Canary"
         }
       ],
       "title": "Watched from recommendations",
@@ -280,8 +314,8 @@
       },
       "gridPos": {
         "h": 9,
-        "w": 12,
-        "x": 12,
+        "w": 8,
+        "x": 8,
         "y": 10
       },
       "id": 4,
@@ -290,7 +324,7 @@
           "calcs": [],
           "displayMode": "list",
           "placement": "bottom",
-          "showLegend": false
+          "showLegend": true
         },
         "tooltip": {
           "mode": "single",
@@ -307,12 +341,131 @@
             "uid": "PA7F6415749A3297A"
           },
           "keyName": "rec:watched:after",
+          "legend": "",
+          "query": "",
+          "refId": "Main",
+          "type": "timeSeries",
+          "value": "Main"
+        },
+        {
+          "aggregation": "avg",
+          "bucket": 600000,
+          "command": "ts.range",
+          "datasource": {
+            "type": "redis-datasource",
+            "uid": "PA7F6415749A3297A"
+          },
+          "fill": false,
+          "hide": false,
+          "keyName": "canary:rec:watched:after",
+          "legend": "",
+          "query": "",
+          "refId": "Canary",
+          "type": "timeSeries",
+          "value": "Canary"
+        }
+      ],
+      "title": "Time to watch a recommendation",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "redis-datasource",
+        "uid": "PA7F6415749A3297A"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "continuous-GrYlRd"
+          },
+          "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMax": 150,
+            "axisSoftMin": 0,
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 100,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "stepBefore",
+            "lineWidth": 0,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "line+area"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "dark-green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 50
+              },
+              {
+                "color": "dark-red",
+                "value": 100
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 10
+      },
+      "id": 8,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "aggregation": "sum",
+          "bucket": 600000,
+          "command": "ts.range",
+          "datasource": {
+            "type": "redis-datasource",
+            "uid": "PA7F6415749A3297A"
+          },
+          "keyName": "rec:failed:counter",
           "query": "",
           "refId": "A",
           "type": "timeSeries"
         }
       ],
-      "title": "Time to watch a recommendation",
+      "title": "Kafka errors",
       "type": "timeseries"
     }
   ],
@@ -331,6 +484,6 @@
   "timezone": "",
   "title": "Online evaluation",
   "uid": "8fUQ0aN4k",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }
