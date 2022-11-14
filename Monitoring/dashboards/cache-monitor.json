@@ -140,6 +140,38 @@
           "streamingInterval": 1000,
           "type": "timeSeries",
           "value": "from model"
+        },
+        {
+          "aggregation": "max",
+          "bucket": 60000,
+          "command": "ts.range",
+          "datasource": {
+            "type": "redis-datasource",
+            "uid": "PA7F6415749A3297A"
+          },
+          "hide": false,
+          "keyName": "canary:cache:hit",
+          "legend": "recommend",
+          "query": "",
+          "refId": "C",
+          "type": "timeSeries",
+          "value": "[canary] from cache"
+        },
+        {
+          "aggregation": "max",
+          "bucket": 60000,
+          "command": "ts.range",
+          "datasource": {
+            "type": "redis-datasource",
+            "uid": "PA7F6415749A3297A"
+          },
+          "hide": false,
+          "keyName": "canary:cache:miss",
+          "legend": "recommend",
+          "query": "",
+          "refId": "D",
+          "type": "timeSeries",
+          "value": "[canary] from model"
         }
       ],
       "title": "Recommendation requests",
@@ -161,6 +193,6 @@
   "timezone": "",
   "title": "Cache monitor",
   "uid": "zBLqnaN4z",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
 }

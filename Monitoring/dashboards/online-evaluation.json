@@ -116,7 +116,7 @@
           },
           "fill": false,
           "keyName": "rec:watched:rank",
-          "legend": "",
+          "legend": "MRR",
           "query": "",
           "refId": "Main",
           "type": "timeSeries",
@@ -132,7 +132,7 @@
           },
           "hide": false,
           "keyName": "canary:rec:watched:rank",
-          "legend": "",
+          "legend": "MRR",
           "query": "",
           "refId": "Canary",
           "type": "timeSeries",
@@ -228,7 +228,7 @@
             "uid": "PA7F6415749A3297A"
           },
           "keyName": "rec:watched:counter",
-          "legend": "",
+          "legend": "watched",
           "query": "",
           "refId": "Main",
           "type": "timeSeries",
@@ -244,7 +244,7 @@
           },
           "hide": false,
           "keyName": "canary:rec:watched:counter",
-          "legend": "",
+          "legend": "watched",
           "query": "",
           "refId": "Canary",
           "type": "timeSeries",
@@ -341,7 +341,7 @@
             "uid": "PA7F6415749A3297A"
           },
           "keyName": "rec:watched:after",
-          "legend": "",
+          "legend": "time-taken",
           "query": "",
           "refId": "Main",
           "type": "timeSeries",
@@ -358,7 +358,7 @@
           "fill": false,
           "hide": false,
           "keyName": "canary:rec:watched:after",
-          "legend": "",
+          "legend": "time-taken",
           "query": "",
           "refId": "Canary",
           "type": "timeSeries",
@@ -381,20 +381,19 @@
           "custom": {
             "axisCenteredZero": false,
             "axisColorMode": "text",
-            "axisLabel": "",
             "axisPlacement": "auto",
             "axisSoftMax": 150,
             "axisSoftMin": 0,
             "barAlignment": 0,
             "drawStyle": "bars",
             "fillOpacity": 100,
-            "gradientMode": "none",
+            "gradientMode": "scheme",
             "hideFrom": {
               "legend": false,
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "stepBefore",
+            "lineInterpolation": "stepAfter",
             "lineWidth": 0,
             "pointSize": 5,
             "scaleDistribution": {
@@ -415,15 +414,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "dark-green",
+                "color": "green",
                 "value": null
               },
               {
-                "color": "yellow",
+                "color": "#EAB839",
                 "value": 50
               },
               {
-                "color": "dark-red",
+                "color": "red",
                 "value": 100
               }
             ]
@@ -446,7 +445,7 @@
           "showLegend": false
         },
         "tooltip": {
-          "mode": "single",
+          "mode": "multi",
           "sort": "none"
         }
       },
@@ -465,7 +464,7 @@
           "type": "timeSeries"
         }
       ],
-      "title": "Kafka errors",
+      "title": "# of Kafka errors",
       "type": "timeseries"
     }
   ],
@@ -484,6 +483,6 @@
   "timezone": "",
   "title": "Online evaluation",
   "uid": "8fUQ0aN4k",
-  "version": 3,
+  "version": 4,
   "weekStart": ""
 }

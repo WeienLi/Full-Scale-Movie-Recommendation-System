@@ -61,7 +61,7 @@ function stopCanary() {
 # Release the Flask API and remove the canary
 function release() {
     echo "Releasing project containers..."
-    docker-compose up -d --build
+    start
     stopCanary
     docker image prune -f
 }
