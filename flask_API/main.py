@@ -20,7 +20,7 @@ DEFAULT_USER = {
     "occupation": "other",
     "gender": "M",
 }
-APP_MODE = os.environ.get("APP_MODE", APP_MODES.MAIN)
+APP_MODE = os.environ.get("APP_MODE", APP_MODES.CANARY)
 
 
 def metrics_rule(req):
