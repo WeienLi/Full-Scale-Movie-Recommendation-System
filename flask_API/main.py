@@ -83,9 +83,8 @@ def getRecommendations(userID):
 
     # cache recommendations
     saved_rec = SavedRec()
-    # get current python timestamp
     sha = os.environ.get("GITHUB_SHA", "unknown")
-    saved_rec.init(userID, result, time.time(), sha, APP_MODE)
+    saved_rec.init(userID, result, time.time(), sha, str(APP_MODE))
     db.set(db_key_prefix + userID, str(saved_rec))
 
     return result

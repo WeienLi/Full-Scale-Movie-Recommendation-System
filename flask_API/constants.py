@@ -31,8 +31,12 @@ class SavedRec:
         self.sha = sha
         self.app_mode = app_mode
 
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=4)
-
     def __str__(self):
-        return self.toJSON()
+        data = {
+            "userID": self.userID,
+            "recommendations": self.recommendations,
+            "timestamp": self.timestamp,
+            "sha": self.sha,
+            "app_mode": self.app_mode,
+        }
+        return json.dumps(data)
