@@ -8,7 +8,7 @@ env:
   HOST_NAME: fall2022-comp585-3.cs.mcgill.ca
   USER_NAME: team-3
   FOLDER_NAME: Team-3
-  CANARY_DIR: ~/.tmp/$FOLDER_NAME
+  CANARY_DIR: ~/.tmp/Team-3
   APP_SHA: ${{ github.sha }}
 
 jobs:
