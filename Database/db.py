@@ -17,10 +17,7 @@ class RedisDB:
         self.connected_to_redis = False
         REDIS_HOST = os.getenv("REDIS_HOST")
         REDIS_PORT = os.getenv("REDIS_PORT")
-        self.r = redis.Redis(
-            host=REDIS_HOST,
-            port=REDIS_PORT,
-        )
+        self.r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT,)
         if self.r.ping():
             print("Connected to Redis")
             self.connected_to_redis = True

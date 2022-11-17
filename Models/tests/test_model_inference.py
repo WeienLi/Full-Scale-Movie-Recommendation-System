@@ -36,14 +36,7 @@ def test_retrieval():
         "user_occupation": tf.constant([user_occupation]),
     }
     _, titles = model_retrieval(user)
-    assert (
-        len(
-            titles[
-                0,
-            ]
-        )
-        == 500
-    )
+    assert len(titles[0,]) == 500
 
 
 @pytest.mark.skip(reason="Not using ranking model right now")
