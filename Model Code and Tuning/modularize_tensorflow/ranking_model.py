@@ -1,3 +1,4 @@
+"""
 from typing import Dict, Text
 
 import numpy as np
@@ -338,3 +339,4 @@ def train_retrieval(cached_train, cached_test, lr=0.1):
     model_2.compile(optimizer=tf.keras.optimizers.Adagrad(learning_rate=lr))
     model_2.fit(cached_train, epochs=10, validation_data=cached_test)
     return model_2
+"""
