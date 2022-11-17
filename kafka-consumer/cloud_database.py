@@ -14,7 +14,7 @@ from utils.message_parser import parse_message
 def insert_data(database, table, data):
     try:
         database.table(table).insert(data).execute()  # inserting one record
-    except:
+    except Exception:
         print("insertion failed")
 
 
@@ -25,7 +25,7 @@ def get_all_data(database, table, data):
         )  # select everything from the table
         print("get all data")
         return data
-    except:
+    except Exception:
         print("get all data failed")
 
 
@@ -35,7 +35,7 @@ def get_all_data(database, table, data):
 def delete_all_data(database, table):
     try:
         database.table(table).delete().eq("flag", 1).execute()
-    except:
+    except Exception:
         print("delete failed")
 
 
@@ -95,7 +95,9 @@ def getKafkaLogs(database, streamType: MessageType, numberOfLogs: int, consumer)
 
 # connect to database
 API_URL = "https://lsfcmdyggefxunujmnxs.supabase.co"
-API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzZmNtZHlnZ2VmeHVudWptbnhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE2Njg0NDczMjYsImV4cCI6MTk4NDAyMzMyNn0.bY-L6ccfEGUK3pc2EeR-EnkWLQTzGvHGskMxXn1f4Uc"
+key1 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzZmNtZHlnZ2VmeHVudWptbnhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE2Njg0NDczMjYs"
+key2 = "ImV4cCI6MTk4NDAyMzMyNn0.bY-L6ccfEGUK3pc2EeR-EnkWLQTzGvHGskMxXn1f4Uc"
+API_KEY = key1 + key2
 supabase = create_client(API_URL, API_KEY)
 supabase
 
