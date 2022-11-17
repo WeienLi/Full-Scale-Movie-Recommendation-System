@@ -1,4 +1,3 @@
-"""
 from datetime import datetime
 
 import pandas as pd
@@ -127,4 +126,3 @@ def get_train_test_size(watched, percentage=80):
     N_train = N * percentage // 100
     N_test = N - N_train
     return N, N_train, N_test
-"""
