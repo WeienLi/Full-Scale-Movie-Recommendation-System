@@ -1,4 +1,3 @@
-import psycopg2
 from supabase import create_client
 from utils.constants import MessageType
 from utils.message_parser import parse_message
@@ -94,12 +93,14 @@ def getKafkaLogs(database, streamType: MessageType, numberOfLogs: int, consumer)
 
 
 # connect to database
-API_URL = "https://lsfcmdyggefxunujmnxs.supabase.co"
-key1 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzZmNtZHlnZ2VmeHVudWptbnhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE2Njg0NDczMjYs"
-key2 = "ImV4cCI6MTk4NDAyMzMyNn0.bY-L6ccfEGUK3pc2EeR-EnkWLQTzGvHGskMxXn1f4Uc"
-API_KEY = key1 + key2
-supabase = create_client(API_URL, API_KEY)
-supabase
+def connection():
+    API_URL = "https://lsfcmdyggefxunujmnxs.supabase.co"
+    key1 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzZmNtZHlnZ2VmeHVudWptbnhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE2Njg0NDczMjYs"
+    key2 = "ImV4cCI6MTk4NDAyMzMyNn0.bY-L6ccfEGUK3pc2EeR-EnkWLQTzGvHGskMxXn1f4Uc"
+    API_KEY = key1 + key2
+    supabase = create_client(API_URL, API_KEY)
+    return supabase
+
 
 # consumer = get_consumer()
 # getKafkaLogs(supabase, MessageType.WATCHTIME, 10, consumer)
@@ -108,14 +109,16 @@ supabase
 # delete_all_data(supabase, "WatchTime")
 
 
-conn = psycopg2.connect(
-    database="postgres",
-    host="db.lsfcmdyggefxunujmnxs.supabase.co",
-    user="postgres",
-    password="gE9A9MvnPFYwdwD",
-    port="5432",
-)
-print("connection")
-cursor = conn.cursor()
-result = cursor.execute('SELECT * FROM "WatchTime"')
-print(result)
+# psycopg is not working... Have not figured out why. Probabily just give it up and use supabase approach.
+
+# conn = psycopg2.connect(
+#     database="postgres",
+#     host="db.lsfcmdyggefxunujmnxs.supabase.co",
+#     user="postgres",
+#     password="gE9A9MvnPFYwdwD",
+#     port="5432",
+# )
+# print("connection")
+# cursor = conn.cursor()
+# result = cursor.execute('SELECT * FROM "WatchTime"')
+# print(result)
