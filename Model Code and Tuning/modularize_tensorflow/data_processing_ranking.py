@@ -1,3 +1,4 @@
+"""
 import data_processing_retrieval
 import pandas as pd
 
@@ -45,3 +46,4 @@ def get_train_test_size(ratings, percentage=80):
     N_train = N * percentage // 100
     N_test = N - N_train
     return N_train, N_test
+"""
