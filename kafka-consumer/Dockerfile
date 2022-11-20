@@ -6,7 +6,8 @@ ENV PATH="/opt/venv/bin:$PATH"
 RUN pip install --upgrade pip \
     && pip install pykafka \
     && pip install redis \
-    && pip install prometheus_client
+    && pip install prometheus_client \
+    && pip install supabase==0.7.1
 
 WORKDIR /Team-3
 COPY . .
