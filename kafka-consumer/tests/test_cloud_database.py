@@ -49,3 +49,53 @@ def test_getKafkaLogs():
         assert True
     except Exception:
         assert False
+
+
+def test_process_message_for_cloud():
+    log1 = "2022-10-07T13:43:26,246904,GET /rate/chicken+run+2000=5"
+    log2 = (
+        "2022-10-07T14:21:02,245839,GET /data/m/the+man+who+knew+too+much+1956/63.mpg"
+    )
+    log3 = None
+    log4 = "asdd"
+    supabase = cloud_database.connection()
+    try:
+        result = cloud_database.process_message_for_cloud(
+            supabase, log1, MessageType.RATING
+        )
+        assert result == 1
+    except Exception:
+        assert False
+
+    try:
+        result = cloud_database.process_message_for_cloud(
+            supabase, log2, MessageType.WATCHTIME
+        )
+        assert result == 1
+    except Exception:
+        assert False
+    try:
+        result = cloud_database.process_message_for_cloud(
+            supabase, log3, MessageType.WATCHTIME
+        )
+        assert result == 0
+    except Exception:
+        assert False
+
+    try:
+        result = cloud_database.process_message_for_cloud(
+            supabase, log4, MessageType.WATCHTIME
+        )
+        assert result == 0
+    except Exception:
+        assert False
+
+
+def get_table_length():
+    supabase = cloud_database.connection()
+    length = get_table_length(supabase, "WatchTime")
+    assert length > 0
+
+    supabase = cloud_database.connection()
+    length = get_table_length(supabase, "Rating")
+    assert length > 0

@@ -1,6 +1,8 @@
 import json
 import time
 
+import cloud_database
+
 from Database.db import RedisDB
 
 from .utils.common import get_consumer, start_prometheus
@@ -112,10 +114,44 @@ def process_message(message):
                 db.set(db_key, json.dumps(value))
 
 
+supabase = cloud_database.connection()
+count_watch = 0
+count_rating = 0
+threshold = 100000
 for message in consumer:
     try:
         process_message(message)
         if not db.connected_to_redis:
             db.connect()
+    except Exception as e:
+        print("[ERROR]", e)
+
+    # upload logs to database stuff
+    try:
+        if count_rating <= threshold:
+            count_rating += cloud_database.process_message_for_cloud(
+                supabase, message, MessageType.RATING
+            )
+            print("rating:", count_rating)
+
+        if count_watch <= threshold:
+            count_watch += cloud_database.process_message_for_cloud(
+                supabase, message, MessageType.WATCHTIME
+            )
+            print("watchtime:", count_watch)
+
+        # check if the database is cleaned
+        if count_watch >= threshold:
+            current_size = cloud_database.get_table_length(supabase, "WatchTime")
+            if current_size < 10:
+                count_watch = current_size
+                print("databse is clean, reset watch counter")
+
+        if count_rating >= threshold:
+            current_size = cloud_database.get_table_length(supabase, "Rating")
+            if current_size < 10:
+                count_rating = current_size
+                print("databse is clean, reset rating counter")
+
     except Exception as e:
         print("[ERROR]", e)
