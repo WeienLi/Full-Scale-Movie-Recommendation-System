@@ -1,6 +1,7 @@
 from supabase import create_client
-from utils.constants import MessageType
-from utils.message_parser import parse_message
+
+from .utils.constants import MessageType
+from .utils.message_parser import parse_message
 
 # table: Rating or WatchTime
 # data in json format
