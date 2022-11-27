@@ -12,6 +12,7 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       GITHUB_SHA: ${GITHUB_SHA}
+      WANDB_API_KEY: ${WANDB_API_KEY}
       APP_MODE: main
     healthcheck:
       test: wget --spider --tries=1 --no-verbose http://localhost:8082/ || bash -c 'kill -s 15 -1 && (sleep 10; kill -s 9 -1)'
@@ -30,6 +31,7 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       GITHUB_SHA: ${GITHUB_SHA}
+      WANDB_API_KEY: ${WANDB_API_KEY}
       APP_MODE: canary
     profiles:
       - canary
@@ -111,7 +113,7 @@ services:
   kafka-consumer:
     build:
       context: .
-      dockerfile: ./kafka-consumer/Dockerfile
+      dockerfile: ./kafka_consumer/Dockerfile
     container_name: kafka-consumer
     restart: unless-stopped
     depends_on:

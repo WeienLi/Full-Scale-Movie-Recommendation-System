@@ -14,14 +14,14 @@ Keep requirements.txt up to date if you install some new packages:
 pip freeze > requirements.txt
 ```
 
-## Running kafka-consumer
+## Running kafka_consumer
 
 🟥 IMPORTANT: You'll need to be on the McGill network (Wifi or VPN) to access the Kafka streams.
 
 #### Read user ratings
 
 ```
-python kafka-consumer/read_ratings.py
+python kafka_consumer/read_ratings.py
 ```
 
 ## Running flask_API

@@ -15,6 +15,6 @@ RUN python -c "import tensorflow as tf; print(tf.config.list_physical_devices('G
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY . .
+COPY --chown=user . /Team-3
 
 ENTRYPOINT  ["conda", "run", "--no-capture-output", "-n", "tf", "gunicorn", "-w", "1", "--bind", "0.0.0.0:8082", "--timeout", "90", "flask_API:app", "--log-level", "debug"]

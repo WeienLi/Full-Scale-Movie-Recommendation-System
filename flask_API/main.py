@@ -42,6 +42,11 @@ def hello_world():
 def getRecommendations(userID):
     """Get a list of recommended movies for a given user ID"""
     """Inputs: userID (string)"""
+    # check if the userID is full of digits
+    if not userID.isdigit():
+        print("userID has non-digit characters")
+        abort(404, "User not found")
+
     # check if recommendations are already in cache
     db_key_prefix = ""
     if APP_MODE == str(APP_MODES.CANARY.value):

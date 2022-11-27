@@ -27,7 +27,7 @@ def Countinous_Learning():
     )
 
     path = "Models/utils/unique_values/"
-    unique_movie_titles = list(np.loadtxt(path + "unique_languages.txt", dtype=str))
+    unique_movie_titles = list(np.loadtxt(path + "unique_movie_titles.txt", dtype=str))
     unique_years_binned = list(
         np.loadtxt(path + "unique_years_binned.txt", dtype=float)
     )
@@ -54,7 +54,7 @@ def Countinous_Learning():
         unique_occupations,
     )
     # print("Hello")
-    retrieval_model.train_retrieval(True, cached_train, cached_test, 16, 0.006, 4)
+    retrieval_model.train_retrieval(True, cached_train, cached_test, 16, 0.006, 1)
 
 
 st = time.time()

@@ -4,7 +4,8 @@ import os
 import numpy as np
 import tensorflow as tf
 import tensorflow_recommenders as tfrs
-import wandb
+
+import wandb  # isort:skip
 
 tf.get_logger().setLevel(logging.ERROR)
 

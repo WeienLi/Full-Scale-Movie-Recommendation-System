@@ -58,7 +58,7 @@ def users_preprocessing():
      Load and preprocess the user dataset in github folder architecture
     :return: Pandas dataframe: the user data after preprocessing
     """
-    users = pd.read_csv("../../Datasets/user_data.csv", sep=";")
+    users = pd.read_csv("../../Datasets/data_user.csv", sep=";")
     bins = [0, 18, 25, 35, 45, 55, 65, 100]
     labels = [0, 1, 2, 3, 4, 5, 6]
     users["age_binned"] = pd.cut(users["age"], bins=bins, labels=labels)

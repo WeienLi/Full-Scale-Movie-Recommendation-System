@@ -17,68 +17,64 @@ def test_data_quality():
 
 def test_data_movie_processed():
     print("test_movie_processed")
-    try:
-        path_to_file = os.path.join(self_dir, "../Datasets/data_movie_processed.csv")
 
-        movies = pd.read_csv(path_to_file, sep=";")
-        column_0 = "movieID;vote_average;popularity;original_language".split(";")
-        column_1 = "Comedy;Mystery;Crime;Drama;Romance;Documentary;Thriller;Action;Animation".split(
-            ";"
-        )
-        column_2 = "Science Fiction;Adventure;War;Horror;Western;Fantasy;Family;History;TV Movie;Music;Foreign".split(
-            ";"
-        )
-        column_names = []
-        column_names = column_names + column_0 + column_1 + column_2
+    path_to_file = os.path.join(self_dir, "../Datasets/data_movie_processed.csv")
 
-        # check has NULL
-        for name in column_names:
-            has_NA = movies[name].isnull().sum()
+    movies = pd.read_csv(path_to_file, sep=";")
+    column_0 = "movieID;vote_average;popularity;original_language".split(";")
+    column_1 = "Comedy;Mystery;Crime;Drama;Romance;Documentary;Thriller;Action;Animation".split(
+        ";"
+    )
+    column_2 = "Science Fiction;Adventure;War;Horror;Western;Fantasy;Family;History;TV Movie;Music;Foreign".split(
+        ";"
+    )
+    column_names = []
+    column_names = column_names + column_0 + column_1 + column_2
 
-            if has_NA > 0:
-                print(name)
-                print("has null: " + str(has_NA))
-                assert False
+    # check has NULL
+    for name in column_names:
+        has_NA = movies[name].isnull().sum()
 
-        # check no duplicate movieID
-        list_movies = movies["movieID"]
-        set_movies = set(list_movies)
-        if not len(list_movies) == len(set_movies):
-            print("has duplicate!")
-            assert False
+        assert has_NA <= 0
+        # print(name)
+        # print("has null: " + str(has_NA))
+        # assert False
 
-        # check binary encode
-        # check
-        genre = []
-        genre = genre + column_1 + column_2
-        for name in genre:
-            data = movies[name]
-            set_data = set(data)
-            if len(set_data) > 2:
-                assert False
+    # check no duplicate movieID
+    list_movies = movies["movieID"]
+    set_movies = set(list_movies)
+    assert len(list_movies) == len(set_movies)
+    # print("has duplicate!")
+    # assert False
 
-        # check length_binned;year_binned TBD
-        binned_value = set([0, 1, 2, 3, 4])
+    # check binary encode
+    # check
+    genre = []
+    genre = genre + column_1 + column_2
+    for name in genre:
+        data = movies[name]
+        set_data = set(data)
+        assert len(set_data) <= 2
+        # assert False
 
-        # list_movies = movies["length_binned"]
-        # set_movies = set(list_movies)
+    # check length_binned;year_binned TBD
+    binned_value = set([0, 1, 2, 3, 4])
 
-        # overlap = set_movies.intersection(binned_value)
-        # if not len(overlap) == len(set_movies) :
-        #     print("length_binned has strange value!")
-        #     assert False
+    # list_movies = movies["length_binned"]
+    # set_movies = set(list_movies)
 
-        list_movies = movies["year_binned"]
-        set_movies = set(list_movies)
+    # overlap = set_movies.intersection(binned_value)
+    # if not len(overlap) == len(set_movies) :
+    #     print("length_binned has strange value!")
+    #     assert False
 
-        overlap = set_movies.intersection(binned_value)
-        if not len(overlap) == len(set_movies):
-            print("length_binned has strange value!")
-            assert False
+    list_movies = movies["year_binned"]
+    set_movies = set(list_movies)
 
-        assert True
-    except Exception:
-        assert False
+    overlap = set_movies.intersection(binned_value)
+    assert len(overlap) == len(set_movies)
+    # print("length_binned has strange value!")
+    # assert False
 
 
 # check candidates
@@ -94,11 +90,9 @@ def test_candidates():
     popular = list(movies["popularity"])
     v_a.sort()
     popular.sort()
-    if not v_a[0] > 6.0:
-        assert False
-    if not popular[0] > 1.0:
-        assert False
-    assert True
+    assert v_a[0] > 6.0
+    # assert False
+    assert popular[0] > 1.0
 
 
 # check movie data: has Na, has duplicate
@@ -114,29 +108,20 @@ def test_data_user():
     for name in columns:
         has_NA = movies[name].isnull().sum()
 
-        if has_NA > 0:
-            print(name)
-            print("has null: " + str(has_NA))
-            assert False
+        assert has_NA <= 0
 
     ages = list(movies["age"])
     ages.sort()
-    if ages[0] < 0:
-        assert False
+    assert ages[0] >= 0
 
-    if ages[-1] > 200:
-        assert False
+    assert ages[-1] < 200
 
     gender = list(movies["gender"])
     set_gender = set(gender)
 
     genders = set(["M", "F"])
-    if len(set_gender) == 2 and set_gender.issubset(genders):
-        pass
-    else:
-        assert False
 
-    assert True
+    assert len(set_gender) == 2 and set_gender.issubset(genders)
 
 
 # check data_watched.csv
@@ -153,18 +138,12 @@ def test_data_watched():
     for name in columns:
         has_NA = movies[name].isnull().sum()
 
-        if has_NA > 0:
-            print(name)
-            print("has null: " + str(has_NA))
-            assert False
+        assert has_NA <= 0
 
     watchTime = list(movies["watchTime"])
     watchTime.sort()
 
-    if watchTime[0] < 10:
-        assert False
-
-    assert True
+    assert watchTime[0] >= 10
 
 
 # check data_watched.csv
@@ -181,20 +160,15 @@ def test_data():
     for name in columns:
         has_NA = movies[name].isnull().sum()
 
-        if has_NA > 0:
-            print(name)
-            print("has null: " + str(has_NA))
-            assert False
+        assert has_NA <= 0
 
     rating = movies["ratings"]
     set_rating = set(rating)
     rating_value = set([0, 1, 2, 3, 4, 5])
     overlap = set_rating.intersection(rating_value)
-    if not len(overlap) == len(set_rating):
-        print("set_rating has strange value!")
-        assert False
-
-    assert True
+    assert len(overlap) == len(set_rating)
+    # print("set_rating has strange value!")
+    # assert False
 
 
 def test_watched_rating_1():
@@ -206,12 +180,7 @@ def test_watched_rating_1():
     for name in columns:
         has_NA = movies[name].isnull().sum()
 
-        if has_NA > 0:
-            print(name)
-            print("has null: " + str(has_NA))
-            assert False
-
-    assert True
+        assert has_NA <= 0
 
 
 def test_watched_rating_2():
@@ -223,9 +192,4 @@ def test_watched_rating_2():
     for name in columns:
         has_NA = movies[name].isnull().sum()
 
-        if has_NA > 0:
-            print(name)
-            print("has null: " + str(has_NA))
-            assert False
-
-    assert True
+        assert has_NA <= 0

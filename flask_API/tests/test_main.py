@@ -119,3 +119,18 @@ def test_getRecommendations_missing_info(client):
     )
     response = client.get("/recommend/" + user_id)
     assert response.status_code == 200
+
+
+# getRecommendations should not fail for user with missing information
+@responses.activate
+def test_getRecommendations_wrong_id(client):
+    before_test()
+    user_id = "10sss"
+    response = client.get("/recommend/" + user_id)
+    assert response.status_code == 404
+    user_id = "ss10sss"
+    response = client.get("/recommend/" + user_id)
+    assert response.status_code == 404
+    user_id = "sssss10"
+    response = client.get("/recommend/" + user_id)
+    assert response.status_code == 404
