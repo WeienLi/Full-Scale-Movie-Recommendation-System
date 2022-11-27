@@ -1,49 +1,32 @@
-name: Verify inference model
+name: Model feedback loop
 
 on:
-  pull_request:
-    branches:
-      - "*"
+  workflow_dispatch:
+  schedule:
+    - cron: "0 14 26/3 11 *"
 
 env:
   WANDB_TEAM: team-3-comp585
-  WANDB_PROJECT: ci-model-evaluation
+  WANDB_PROJECT: milestone3
+  HOST_NAME: fall2022-comp585-3.cs.mcgill.ca
+  USER_NAME: team-3
+  FOLDER_NAME: Team-3
+  SHA_File: sha.txt
+  APP_SHA: ${{ github.sha }}
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
 
 jobs:
-  check-if-model-changed:
-    runs-on: cirun-cpu-runner
-    outputs:
-      model_changed: ${{ steps.check.outputs.model_changed }}
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v2.3.4
-
-      - uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            "model_code":
-              - 'Model Code and Tuning/**'
-
-      - if: steps.changes.outputs.model_code == 'true'
-        id: check
-        run: echo "model_changed=true" >> $GITHUB_OUTPUT
-
-  verify-model:
-    needs: check-if-model-changed
+  continous-training:
     runs-on: cirun-gpu-runner
-    if: ${{ needs.check-if-model-changed.outputs.model_changed == 'true' }}
     steps:
-      - name: Create comment
-        uses: peter-evans/create-or-update-comment@v2
-        with:
-          issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            #### Model changed 🐌
-            Verifying inference model using SHA `${{ github.sha }}`. This may take a few minutes.
-
       - name: Checkout repo
         uses: actions/checkout@v2.3.4
+
+      - name: Create Branch
+        uses: peterjgrainger/action-create-branch@v2.2.0
+        with:
+          branch: new-model-releasement
 
       - name: Check python availability
         id: check-py
@@ -70,16 +53,38 @@ jobs:
           if [ -f dev-requirements.txt ]; then python3 -m pip install -r dev-requirements.txt; fi
 
       - name: Train model
-        run: python3 "Model Code and Tuning"/modularize_tensorflow/Continous_Intergration_main.py
+        run: python3 -m kafka_consumer.feedback_pipeline
         env:
-          GITHUB_SHA: ${{ github.sha }}
-          WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
+          GITHUB_SHA: ${{ env.APP_SHA }}
+          WANDB_API_KEY: ${{ env.WANDB_API_KEY }}
+
+      - name: Create file containing latest sha
+        uses: DamianReeves/write-file-action@master
+        with:
+          path: ${{ env.SHA_File }}
+          contents: |
+            ${{ env.APP_SHA }}
+          write-mode: overwrite
+
+      - name: Commit & Push
+        uses: Andro999b/push@v1.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: new-model-releasement
+          force: true
+          message: "Writing new Sha checkout wandb for new model information - ${ date }"
+
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          branch: new-model-releasement
 
       - name: Get Runs Using SHA
         uses: machine-learning-apps/wandb-action@master
         with:
           PROJECT_NAME: ${{ format('{0}/{1}', env.WANDB_TEAM, env.WANDB_PROJECT) }}
-          FILTER_GITHUB_SHA: ${{ github.sha }}
+          FILTER_GITHUB_SHA: ${{ env.APP_SHA }}
           BASELINE_TAGS: "['baseline', 'reference']"
           DISPLAY_METRICS: "[
             'factorized_top_k/top_20_categorical_accuracy',
@@ -105,8 +110,8 @@ jobs:
       - name: Post comment with evaluation results
         uses: peter-evans/create-or-update-comment@v2
         with:
-          issue-number: ${{ github.event.pull_request.number }}
+          issue-number: ${{ steps.cpr.outputs.pull-request-number }}
           body: |
             #### Model verified ✅
-            SHA: `${{ github.sha }}`
+            SHA: `${{ env.APP_SHA }}`
             ${{ steps.csv-table-output.outputs.markdown-table }}

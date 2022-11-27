@@ -1,0 +1,12 @@
+[run]
+omit = 
+    # ignore all files in tests/ for coverage
+    */tests/*
+    # Skip testing monitor.py since it's not testable right now
+    # https://github.com/ChenKua/Team-3/pull/86#issuecomment-1326892467
+    kafka_consumer/monitor.py
+    # Skip testing feedback_pipeline.py since it's not testable right now
+    kafka_consumer/feedback_pipeline.py
+    # we're no longer using the ranking model in our code
+    Models/utils/input_ranking.py
+    Models/utils/ranking_model_inference.py

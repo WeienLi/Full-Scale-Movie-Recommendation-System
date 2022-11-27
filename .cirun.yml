@@ -1,0 +1,36 @@
+# Self-Hosted Github Action Runners on GCP via Cirun.io
+# Reference: https://docs.cirun.io/Reference/yml.html
+runners:
+  - name: gcp-runner
+    cloud: gcp
+    gpu: nvidia-tesla-t4
+    instance_type: n1-standard-1
+    machine_image: comp585-runners:cirun-nvidia
+    region:
+      - northamerica-northeast1-c
+      - us-central1-a
+      - us-central1-b
+      - us-central1-c
+      - us-central1-f
+      - us-east1-c
+      - us-east1-d
+      - us-east4-a
+      - us-east4-b
+      - us-east4-c
+      - us-west1-a
+      - us-west1-b
+      - us-west2-b
+      - us-west2-c
+      - us-west4-a
+      - us-west4-b
+    labels:
+      - cirun-gpu-runner
+
+  - name: "cpu-runner"
+    cloud: "aws"
+    instance_type: "t2.medium"
+    machine_image: "ami-08d29b51264bd75e3"
+    region: "ca-central-1"
+    preemptible: false
+    labels:
+      - "cirun-cpu-runner"

@@ -9,11 +9,11 @@ env:
   USER_NAME: team-3
   FOLDER_NAME: Team-3
   CANARY_DIR: ~/.tmp/Team-3
-  APP_SHA: ${{ github.sha }}
+  WANDB_API_KEY: ${{ secrets.WANDB_API_KEY }}
 
 jobs:
   deploy-canary:
-    runs-on: ubuntu-latest
+    runs-on: cirun-cpu-runner
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2.3.4
@@ -38,23 +38,25 @@ jobs:
         with:
           script: |
             cd ${{ env.CANARY_DIR }}
-            export GITHUB_SHA=${{ env.APP_SHA }}
+            export GITHUB_SHA=$(cat sha.txt)
+            export WANDB_API_KEY=${{ env.WANDB_API_KEY }}
             ./docker.sh start-canary
 
   get-approval:
-    runs-on: ubuntu-latest
+    runs-on: cirun-cpu-runner
     needs: deploy-canary
     steps:
       - name: Wait for approvals
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.TOKEN }}
-          approvers: Shanzid01,WeienLi,ChenKua,msoutojr,Pr0m1s3zZ
+          #approvers: Shanzid01,WeienLi,ChenKua,msoutojr,Pr0m1s3zZ
+          approvers: ChenKua,Shanzid01,WeienLi,msoutojr
           minimum-approvals: 1
           issue-title: "Release ${{ env.APP_SHA }}"
 
   release:
-    runs-on: ubuntu-latest
+    runs-on: cirun-cpu-runner
     needs: get-approval
     steps:
       - name: Checkout repo
@@ -80,11 +82,12 @@ jobs:
         with:
           script: |
             cd ${{ env.FOLDER_NAME }}
-            export GITHUB_SHA=${{ env.APP_SHA }}
+            export GITHUB_SHA=$(cat sha.txt)
+            export WANDB_API_KEY=${{ env.WANDB_API_KEY }}
             ./docker.sh release
 
   cleanup:
-    runs-on: ubuntu-latest
+    runs-on: cirun-cpu-runner
     needs: release
     if: ${{ always() }}
     steps:
